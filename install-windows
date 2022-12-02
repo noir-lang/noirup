@@ -1,0 +1,66 @@
+$nargoHome = "$env:USERPROFILE\.nargo"
+$nargoHomeBin = "$nargoHome\bin"
+$nargoUri = "https://github.com/noir-lang/noir/releases/download/nightly/nargo-x86_64-pc-windows-msvc.zip"
+
+# Get the ID and security principal of the current user account
+$myWindowsID = [System.Security.Principal.WindowsIdentity]::GetCurrent();
+$myWindowsPrincipal = New-Object System.Security.Principal.WindowsPrincipal($myWindowsID);
+
+# Get the security principal for the administrator role
+$adminRole = [System.Security.Principal.WindowsBuiltInRole]::Administrator;
+
+Write-Output $myInvocation.MyCommand.Definition
+# Check to see if we are currently running as an administrator
+if ($myWindowsPrincipal.IsInRole($adminRole))
+{
+    # We are running as an administrator, so change the title and background colour to indicate this
+    $Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + "(Elevated Nargo Installation)";    
+    Clear-Host;
+
+    # Remove-Item -Force -R $nargoHome
+    # Remove-Item -Force -R $env:APPDATA\noir-lang
+    Write-Output "Nargo Home set to $nargoHome" 
+    Write-Output "Nargo Home set to $nargoHomeBin" 
+    mkdir -f -p $nargoHomeBin
+    Write-Output "Nargo Home folder '$nargoHomeBin' created."
+    $tmp = New-TemporaryFile | Rename-Item -PassThru -NewName { $_ -replace 'tmp$', 'zip' }
+    Write-Output "Downloading '$nargoUri' to '$tmp'";
+    Invoke-RestMethod -Method Get -Uri $nargoUri -OutFile $tmp
+    Write-Output "Expanding '$tmp' to '$nargoHomeBin'";
+    Expand-Archive -Force -Path $tmp -DestinationPath $nargoHomeBin
+    Write-Output "Moving '$nargoHomeBin\noir-lang' to '$env:APPDATA\noir-lang'";
+    Move-Item -Force -Path "$nargoHomeBin\noir-lang" -Destination "$env:APPDATA\noir-lang"
+
+    $Reg = "Registry::HKLM\System\CurrentControlSet\Control\Session Manager\Environment"
+    $OldPath = (Get-ItemProperty -Path "$Reg" -Name PATH).Path
+
+    if ($OldPath -split ';'  -contains  $nargoHomeBin) {
+
+        Write-Host "$nargoHomeBin already set..."
+    }
+    else {
+        Write-Output "Setting system path to '$nargoHomeBin\'"; 
+        $NewPath= $OldPath + ";" + "$nargoHomeBin"
+        Set-ItemProperty -Path $Reg -Name PATH -Value $NewPath;          
+    }
+
+    Write-Host -NoNewLine "Press any key to continue..."
+    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    
+} else {
+    
+    # Create a new process object that starts PowerShell
+    $newProcess = New-Object System.Diagnostics.ProcessStartInfo "PowerShell";
+
+    # Specify the current script path and name as a parameter with added scope and support for scripts with spaces in it's path
+    $newProcess.Arguments = $myInvocation.MyCommand.Definition;
+
+    # Indicate that the process should be elevated
+    $newProcess.Verb = "runas";
+
+    # Start the new process
+    [System.Diagnostics.Process]::Start($newProcess);
+
+}
+
+# Note: Meant to be run as "iex ((New-Object System.Net.WebClient).DownloadString('https://noir-lang.com/install-windows.ps1'));"
