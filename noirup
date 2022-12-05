@@ -89,8 +89,10 @@ main() {
 
     # We currently only provide binaries targetting x64_64 architectures.
 
-    ARCHITECTURE="x86_64"
-    # ARCHITECTURE="$(uname -m)"
+    ARCHITECTURE="$(uname -m)"
+    if [ "${ARCHITECTURE}" != "x86_64" ] && [ "${ARCHITECTURE}" != "aarch64" ]; then
+      err "unsupported architecure: $ARCHITECTURE-$PLATFORM"
+    fi  
     # if [ "${ARCHITECTURE}" = "x86_64" ]; then
     #   # Redirect stderr to /dev/null to avoid printing errors if non Rosetta.
     #   if [ "$(sysctl -n sysctl.proc_translated 2>/dev/null)" = "1" ]; then
