@@ -3,7 +3,6 @@ set -e
 
 NARGO_DIR=${NARGO_DIR-"$HOME/.nargo"}
 NARGO_BIN_DIR="$NARGO_DIR/bin"
-CONFIG_DIR=${XDG_CONFIG_HOME-"$HOME/.config"}
 
 main() {
   need_cmd git
@@ -72,15 +71,15 @@ main() {
       NOIRUP_TAG="${NOIRUP_VERSION}"
     fi
 
-    say "installing nargo (version ${NOIRUP_VERSION}, tag ${NOIRUP_TAG})"
-
     PLATFORM="$(uname -s)"
     case $PLATFORM in
       Linux)
         PLATFORM="unknown-linux-gnu"
+        CONFIG_DIR=${XDG_CONFIG_HOME-"$HOME/.config"}
         ;;
       Darwin)
         PLATFORM="apple-darwin"
+        CONFIG_DIR=${XDG_CONFIG_HOME-"$HOME/Library/Application Support"}
         ;;
       *)
         err "unsupported platform: $PLATFORM"
@@ -93,6 +92,9 @@ main() {
     if [ "${ARCHITECTURE}" != "x86_64" ] && [ "${ARCHITECTURE}" != "aarch64" ]; then
       err "unsupported architecure: $ARCHITECTURE-$PLATFORM"
     fi  
+
+    say "installing nargo (version ${NOIRUP_VERSION}, tag ${NOIRUP_TAG})"
+
     # if [ "${ARCHITECTURE}" = "x86_64" ]; then
     #   # Redirect stderr to /dev/null to avoid printing errors if non Rosetta.
     #   if [ "$(sysctl -n sysctl.proc_translated 2>/dev/null)" = "1" ]; then
@@ -111,11 +113,12 @@ main() {
     BIN_TARBALL_URL="${RELEASE_URL}/nargo-${ARCHITECTURE}-${PLATFORM}.tar.gz"
 
     # Download the binaries tarball and unpack it into the .nargo bin directory.
-    say "downloading latest nargo"
+    say "downloading latest nargo to '$NARGO_BIN_DIR'"
     ensure curl -# -L $BIN_TARBALL_URL | tar -xzC $NARGO_BIN_DIR
 
     # Replace existing std_lib with copy from new installation.
     ensure rm -rf "$CONFIG_DIR/noir-lang/std"
+    say "installing noir-lang/std lib to '$NARGO_BIN_DIR/noir-lang'"
     ensure mv "$NARGO_BIN_DIR/noir-lang" $CONFIG_DIR
 
   else
