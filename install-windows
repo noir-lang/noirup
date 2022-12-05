@@ -42,6 +42,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
         Write-Output "Setting system path to '$nargoHomeBin\'"; 
         $NewPath= $OldPath + ";" + "$nargoHomeBin"
         Set-ItemProperty -Path $Reg -Name PATH -Value $NewPath;          
+        Write-Host "Please restart any shell process before using nargo command..."
     }
 
     Write-Host -NoNewLine "Press any key to continue..."
@@ -63,4 +64,4 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 
 }
 
-# Note: Meant to be run as "iex ((New-Object System.Net.WebClient).DownloadString('https://noir-lang.com/install-windows.ps1'));"
+# Note: Meant to be run as "iex (iwr https://noir-lang.dev/install).Content"
