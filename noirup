@@ -86,9 +86,15 @@ main() {
         ;;
     esac
 
-    # We currently only provide binaries targetting x64_64 architectures.
-
+    # Fetch system's architecture.
     ARCHITECTURE="$(uname -m)"
+
+    # Align ARM naming for release fetching.
+    if [ "${ARCHITECTURE}" = "arm64" ]; then
+      ARCHITECTURE="aarch64" # Align release naming.
+    fi
+
+    # Reject unsupported architectures.
     if [ "${ARCHITECTURE}" != "x86_64" ] && [ "${ARCHITECTURE}" != "aarch64" ]; then
       err "unsupported architecure: $ARCHITECTURE-$PLATFORM"
     fi  
@@ -102,11 +108,6 @@ main() {
     #   else
     #     ARCHITECTURE="amd64" # Intel.
     #   fi
-    # elif [ "${ARCHITECTURE}" = "arm64" ] ||[ "${ARCHITECTURE}" = "aarch64" ] ; then
-    #   ARCHITECTURE="arm64" # Arm.
-    # else
-    #   ARCHITECTURE="amd64" # Amd.
-    # fi
 
     # Compute the URL of the release tarball in the Noir repository.
     RELEASE_URL="https://github.com/${NOIRUP_REPO}/releases/download/${NOIRUP_TAG}"
