@@ -6,7 +6,7 @@ echo Installing noirup...
 NARGO_DIR=${NARGO_DIR-"$HOME/.nargo"}
 NARGO_BIN_DIR="$NARGO_DIR/bin"
 
-BIN_URL="https://raw.githubusercontent.com/noir-lang/noir/master/noirup/noirup"
+BIN_URL="https://raw.githubusercontent.com/noir-lang/noirup/main/noirup"
 BIN_PATH="$NARGO_BIN_DIR/noirup"
 
 # Create the .nargo bin directory and noirup binary if it doesn't exist.
