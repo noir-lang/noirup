@@ -5,7 +5,7 @@ Update or revert to a specific Nargo branch with ease.
 ## Installing
 
 ```sh
-curl -L https://raw.githubusercontent.com/noir-lang/noir/master/noirup/install | bash
+curl -L https://raw.githubusercontent.com/noir-lang/noir/main/noirup/install | bash
 ```
 
 ## Usage
