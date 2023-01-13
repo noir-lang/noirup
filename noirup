@@ -119,7 +119,7 @@ main() {
     # Replace existing std_lib with copy from new installation.
     ensure rm -rf "$CONFIG_DIR/noir-lang/std"
     say "installing noir-lang/std lib to '$CONFIG_DIR'"
-    ensure mv "$NARGO_BIN_DIR/noir-lang" $CONFIG_DIR
+    ensure mv "$NARGO_BIN_DIR/noir-lang" "$CONFIG_DIR"
 
   else
     need_cmd cargo
