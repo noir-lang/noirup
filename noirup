@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-NARGO_DIR=${NARGO_DIR-"$HOME/.nargo"}
-NARGO_BIN_DIR="$NARGO_DIR/bin"
+NARGO_HOME=${NARGO_HOME-"$HOME/.nargo"}
+NARGO_BIN_DIR="$NARGO_HOME/bin"
 
 main() {
   need_cmd git
@@ -124,13 +124,13 @@ main() {
   else
     need_cmd cargo
     NOIRUP_BRANCH=${NOIRUP_BRANCH-master}
-    REPO_PATH="${NARGO_DIR}/${NOIRUP_REPO}"
+    REPO_PATH="${NARGO_HOME}/${NOIRUP_REPO}"
 
     if [ ! -d $REPO_PATH ]; then
       # Repo path did not exist, grab the author from the repo, make a directory in .nargo, cd to it and clone.
       IFS="/" read -ra AUTHOR <<<"$NOIRUP_REPO"
-      ensure mkdir -p "$NARGO_DIR/$AUTHOR"
-      cd "$NARGO_DIR/$AUTHOR"
+      ensure mkdir -p "$NARGO_HOME/$AUTHOR"
+      cd "$NARGO_HOME/$AUTHOR"
       ensure git clone https://github.com/${NOIRUP_REPO}
     fi
     # force checkout, discarding any local changes
@@ -143,8 +143,8 @@ main() {
       ensure git checkout ${NOIRUP_COMMIT}
     fi
     # Build the repo and install it locally to the .nargo bin directory.
-    # --root appends /bin to the directory it is given, so we pass NARGO_DIR.
-    RUSTFLAGS="-C target-cpu=native" ensure cargo install --path ./crates/nargo --bins --locked --force --root $NARGO_DIR
+    # --root appends /bin to the directory it is given, so we pass NARGO_HOME.
+    RUSTFLAGS="-C target-cpu=native" ensure cargo install --path ./crates/nargo --bins --locked --force --root $NARGO_HOME
 
   fi
 

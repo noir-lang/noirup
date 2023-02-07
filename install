@@ -3,8 +3,8 @@ set -e
 
 echo Installing noirup...
 
-NARGO_DIR=${NARGO_DIR-"$HOME/.nargo"}
-NARGO_BIN_DIR="$NARGO_DIR/bin"
+NARGO_HOME=${NARGO_HOME-"$HOME/.nargo"}
+NARGO_BIN_DIR="$NARGO_HOME/bin"
 
 BIN_URL="https://raw.githubusercontent.com/noir-lang/noirup/main/noirup"
 BIN_PATH="$NARGO_BIN_DIR/noirup"
@@ -41,7 +41,8 @@ esac
 # Only add noirup if it isn't already in PATH.
 if [[ ":$PATH:" != *":${NARGO_BIN_DIR}:"* ]]; then
   # Add the noirup directory to the path and ensure the old PATH variables remain.
-  echo >>$PROFILE && echo "export PATH=\"\$PATH:$NARGO_BIN_DIR\"" >>$PROFILE
+  echo >>$PROFILE && echo "export NARGO_HOME=\"$NARGO_HOME\"" >>$PROFILE
+  echo >>$PROFILE && echo "export PATH=\"\$PATH:\$NARGO_HOME/bin\"" >>$PROFILE
 fi
 
 echo && echo "Detected your preferred shell is ${PREF_SHELL} and added noirup to PATH. Run 'source ${PROFILE}' or start a new terminal session to use noirup."
