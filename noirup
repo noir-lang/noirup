@@ -97,17 +97,9 @@ main() {
     # Reject unsupported architectures.
     if [ "${ARCHITECTURE}" != "x86_64" ] && [ "${ARCHITECTURE}" != "aarch64" ]; then
       err "unsupported architecure: $ARCHITECTURE-$PLATFORM"
-    fi  
+    fi
 
     say "installing nargo (version ${NOIRUP_VERSION}, tag ${NOIRUP_TAG})"
-
-    # if [ "${ARCHITECTURE}" = "x86_64" ]; then
-    #   # Redirect stderr to /dev/null to avoid printing errors if non Rosetta.
-    #   if [ "$(sysctl -n sysctl.proc_translated 2>/dev/null)" = "1" ]; then
-    #     ARCHITECTURE="arm64" # Rosetta.
-    #   else
-    #     ARCHITECTURE="amd64" # Intel.
-    #   fi
 
     # Compute the URL of the release tarball in the Noir repository.
     RELEASE_URL="https://github.com/${NOIRUP_REPO}/releases/download/${NOIRUP_TAG}"
