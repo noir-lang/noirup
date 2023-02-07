@@ -12,6 +12,7 @@ main() {
     case $1 in
       --)               shift; break;;
 
+      -n|--nightly)     shift; NOIRUP_NIGHTLY="1";;
       -r|--repo)        shift; NOIRUP_REPO=$1;;
       -b|--branch)      shift; NOIRUP_BRANCH=$1;;
       -v|--version)     shift; NOIRUP_VERSION=$1;;
@@ -61,16 +62,6 @@ main() {
 
   NOIRUP_REPO=${NOIRUP_REPO-noir-lang/noir}
   if [[ "$NOIRUP_REPO" == "noir-lang/noir" && -z "$NOIRUP_BRANCH" && -z "$NOIRUP_COMMIT" ]]; then
-    NOIRUP_VERSION=${NOIRUP_VERSION-nightly}
-    NOIRUP_TAG=$NOIRUP_VERSION
-
-    # Normalize versions (handle channels, versions without v prefix)
-    if [[ "$NOIRUP_VERSION" == [[:digit:]]* ]]; then
-      # Add v prefix
-      NOIRUP_VERSION="v${NOIRUP_VERSION}"
-      NOIRUP_TAG="${NOIRUP_VERSION}"
-    fi
-
     PLATFORM="$(uname -s)"
     case $PLATFORM in
       Linux)
@@ -99,10 +90,26 @@ main() {
       err "unsupported architecure: $ARCHITECTURE-$PLATFORM"
     fi
 
-    say "installing nargo (version ${NOIRUP_VERSION}, tag ${NOIRUP_TAG})"
-
     # Compute the URL of the release tarball in the Noir repository.
-    RELEASE_URL="https://github.com/${NOIRUP_REPO}/releases/download/${NOIRUP_TAG}"
+    if [ -z "$NOIRUP_NIGHTLY" ] && [ -z "$NOIRUP_VERSION" ]; then
+      say "installing nargo (latest stable)"
+
+      RELEASE_URL="https://github.com/${NOIRUP_REPO}/releases/latest/download"
+    else
+      NOIRUP_VERSION=${NOIRUP_VERSION-nightly}
+      NOIRUP_TAG=$NOIRUP_VERSION
+
+      # Normalize versions (handle channels, versions without v prefix)
+      if [[ "$NOIRUP_VERSION" == [[:digit:]]* ]]; then
+        # Add v prefix
+        NOIRUP_VERSION="v${NOIRUP_VERSION}"
+        NOIRUP_TAG="${NOIRUP_VERSION}"
+      fi
+
+      say "installing nargo (version ${NOIRUP_VERSION} with tag ${NOIRUP_TAG})"
+
+      RELEASE_URL="https://github.com/${NOIRUP_REPO}/releases/download/${NOIRUP_TAG}"
+    fi
     BIN_TARBALL_URL="${RELEASE_URL}/nargo-${ARCHITECTURE}-${PLATFORM}.tar.gz"
 
     # Download the binaries tarball and unpack it into the .nargo bin directory.
