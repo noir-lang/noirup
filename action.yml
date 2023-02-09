@@ -1,0 +1,34 @@
+name: Noir Toolchain Install
+description: Install the Noir toolchain
+branding:
+  icon: activity
+  color: gray-dark
+
+inputs:
+  version:
+    description: Noir version to install. Defaults to the latest stable version.
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Check for unsupported OS (Windows)
+      if: runner.os == 'Windows'
+      shell: bash
+      run: echo "::error::Noirup Github action does not currently support Windows" && exit 1
+
+
+    - name: Create `.nargo/bin` directory
+      shell: bash
+      run: |
+        mkdir -p $HOME/.nargo/bin
+        chmod +x $HOME/.nargo/bin
+        echo "${HOME}/.nargo/bin" >> $GITHUB_PATH
+
+    - name: Run Noirup
+      shell: bash
+      run: |
+        args=${version:+-v $version}
+        ${{ github.action_path }}/noirup $args 
+      env:
+        version: ${{inputs.version}}

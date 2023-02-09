@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  schedule: [cron: "40 1 * * *"]
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    name: Noir ${{matrix.version}} on ${{matrix.os == 'ubuntu' && 'Linux' || matrix.os == 'macos' && 'macOS' || matrix.os == 'windows' && 'Windows' || '???'}}
+    runs-on: ${{matrix.os}}-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu, macos, windows]
+        version: [0.1.0, 0.1.1]
+        include:
+          - os: ubuntu
+          - os: macos
+          - os: windows
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./
+        name: Run noir-lang/noirup
+        id: version
+        with:
+          version: ${{matrix.version}}
+      # - name: echo ${{'${{steps.toolchain.outputs.cachekey}}'}}
+      #   run: echo '${{steps.toolchain.outputs.cachekey}}'
+      # - name: check ${{'${{steps.toolchain.outputs.cachekey}}'}}
+      #   if: matrix.rust == '1.62.0'
+      #   run: cmp -s <(echo ${{steps.toolchain.outputs.cachekey}}) <(echo 20220627a831)
+      #   shell: bash
+      - run: nargo --version
+      - run: nargo new project
+      - run: nargo check
+        working-directory: ./project
+      - run: nargo compile test-circuit
+        working-directory: ./project
+      - run: nargo test
+        if: matrix.version != '0.1.0'
+        working-directory: ./project
+      
