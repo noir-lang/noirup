@@ -29,12 +29,6 @@ jobs:
         id: version
         with:
           version: ${{matrix.version}}
-      # - name: echo ${{'${{steps.toolchain.outputs.cachekey}}'}}
-      #   run: echo '${{steps.toolchain.outputs.cachekey}}'
-      # - name: check ${{'${{steps.toolchain.outputs.cachekey}}'}}
-      #   if: matrix.rust == '1.62.0'
-      #   run: cmp -s <(echo ${{steps.toolchain.outputs.cachekey}}) <(echo 20220627a831)
-      #   shell: bash
       - run: nargo --version
       - run: nargo new project
       - run: nargo check
