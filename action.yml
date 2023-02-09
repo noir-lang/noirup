@@ -22,7 +22,7 @@ runs:
       run: |
         : parse toolchain version
         if [[ $toolchain == "stable" ]]; then
-          # By default, noirup installs the latest stable version
+          : By default, noirup installs the latest stable version
         elif [[ $toolchain == "nightly" ]]; then
           echo "toolchain="--nightly"" >> $GITHUB_OUTPUT
         else
