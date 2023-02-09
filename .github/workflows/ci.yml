@@ -33,6 +33,6 @@ jobs:
       - run: nargo compile test-circuit
         working-directory: ./project
       - run: nargo test
-        if: matrix.version != '0.1.0'
+        if: matrix.toolchain != '0.1.0'
         working-directory: ./project
       
