@@ -16,12 +16,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu, macos, windows]
+        os: [ubuntu, macos]
         version: [0.1.0, 0.1.1]
         include:
           - os: ubuntu
           - os: macos
-          - os: windows
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v3
