@@ -19,6 +19,7 @@ runs:
       run: echo "::error::Noirup Github action does not currently support Windows" && exit 1
 
     - name: Parse toolchain
+      id: parse
       run: |
         : parse toolchain version
         if [[ $toolchain == "stable" ]]; then
