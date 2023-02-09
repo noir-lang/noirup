@@ -5,8 +5,9 @@ branding:
   color: gray-dark
 
 inputs:
-  version:
+  toolchain:
     description: Noir version to install. Defaults to the latest stable version.
+    default: stable
     required: false
 
 runs:
@@ -17,6 +18,19 @@ runs:
       shell: bash
       run: echo "::error::Noirup Github action does not currently support Windows" && exit 1
 
+    - name: Parse toolchain
+      run: |
+        : parse toolchain version
+        if [[ $toolchain == "stable" ]]; then
+          # By default, noirup installs the latest stable version
+        elif [[ $toolchain == "nightly" ]]; then
+          echo "toolchain="--nightly"" >> $GITHUB_OUTPUT
+        else
+          echo "toolchain="--version $toolchain"" >> $GITHUB_OUTPUT
+        fi
+      env:
+        toolchain: ${{inputs.toolchain}}
+      shell: bash
 
     - name: Create `.nargo/bin` directory
       shell: bash
@@ -27,8 +41,6 @@ runs:
 
     - name: Run Noirup
       shell: bash
-      run: |
-        args=${version:+-v $version}
-        ${{ github.action_path }}/noirup $args 
-      env:
-        version: ${{inputs.version}}
+      run:
+        ${{ github.action_path }}/noirup ${{steps.parse.outputs.toolchain}} 
+      
