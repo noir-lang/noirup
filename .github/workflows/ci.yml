@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   install:
-    name: Noir ${{matrix.version}} on ${{matrix.os == 'ubuntu' && 'Linux' || matrix.os == 'macos' && 'macOS' || matrix.os == 'windows' && 'Windows' || '???'}}
+    name: Noir ${{matrix.toolchain}} on ${{matrix.os == 'ubuntu' && 'Linux' || matrix.os == 'macos' && 'macOS' || matrix.os == 'windows' && 'Windows' || '???'}}
     runs-on: ${{matrix.os}}-latest
     strategy:
       fail-fast: false
