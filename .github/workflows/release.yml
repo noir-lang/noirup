@@ -17,6 +17,7 @@ jobs:
         id: release
         uses: google-github-actions/release-please-action@v3
         with:
+          token: ${{ secrets.NOIRUP_REPO_TOKEN }}
           release-type: simple
           package-name: noirup
           bump-minor-pre-major: true
@@ -32,6 +33,7 @@ jobs:
       - name: Upload files to release
         uses: svenstaro/upload-release-action@v2
         with:
+          repo_token: ${{ secrets.NOIRUP_REPO_TOKEN }}
           file: ./{noirup,install-windows}
           file_glob: true
           overwrite: true
