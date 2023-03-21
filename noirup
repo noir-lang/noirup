@@ -116,11 +116,14 @@ main() {
     say "downloading latest nargo to '$NARGO_BIN_DIR'"
     ensure curl -# -L $BIN_TARBALL_URL | tar -xzC $NARGO_BIN_DIR
 
-    # Replace existing std_lib with copy from new installation.
+    # Prior to v0.3.0, Nargo and the std lib were distributed separated.
     ensure rm -rf "$CONFIG_DIR/noir-lang/std"
-    say "installing noir-lang/std lib to '$CONFIG_DIR'"
-    ensure mv "$NARGO_BIN_DIR/noir-lang" "$CONFIG_DIR"
-
+    if [ -d "$NARGO_BIN_DIR/noir-lang" ]; then
+      # Release tarball contains std lib so we're installing a version prior to v0.3.0.
+      # Move std lib to location expected by Nargo.
+      say "installing noir-lang/std lib to '$CONFIG_DIR'"
+      ensure mv "$NARGO_BIN_DIR/noir-lang" "$CONFIG_DIR"
+    fi
   else
     need_cmd cargo
     NOIRUP_BRANCH=${NOIRUP_BRANCH-master}
