@@ -33,6 +33,12 @@ runs:
         toolchain: ${{inputs.toolchain}}
       shell: bash
 
+    - name: Cache Barretenberg transcript
+      uses: actions/cache@v3
+      with:
+        path: ~/noir_cache/ignition/transcript00.dat
+        key: noir_cache
+
     - name: Create `.nargo/bin` directory
       shell: bash
       run: |
