@@ -2,6 +2,8 @@ $nargoHome = "$env:USERPROFILE\.nargo"
 $nargoHomeBin = "$nargoHome\bin"
 $nargoUri = "https://github.com/noir-lang/noir/releases/download/nightly/nargo-x86_64-pc-windows-msvc.zip"
 
+Write-Output "Logging something to see it";
+
 # Get the ID and security principal of the current user account
 $myWindowsID = [System.Security.Principal.WindowsIdentity]::GetCurrent();
 $myWindowsPrincipal = New-Object System.Security.Principal.WindowsPrincipal($myWindowsID);
@@ -49,7 +51,8 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
     $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
     
 } else {
-    
+    Write-Output "else block";
+
     # Create a new process object that starts PowerShell
     $newProcess = New-Object System.Diagnostics.ProcessStartInfo "PowerShell";
 
