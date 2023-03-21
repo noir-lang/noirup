@@ -28,8 +28,6 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
     Invoke-RestMethod -Method Get -Uri $nargoUri -OutFile $tmp
     Write-Output "Expanding '$tmp' to '$nargoHomeBin'";
     Expand-Archive -Force -Path $tmp -DestinationPath $nargoHomeBin
-    Write-Output "Moving '$nargoHomeBin\noir-lang' to '$env:APPDATA\noir-lang'";
-    Move-Item -Force -Path "$nargoHomeBin\noir-lang" -Destination "$env:APPDATA\noir-lang"
 
     $Reg = "Registry::HKLM\System\CurrentControlSet\Control\Session Manager\Environment"
     $OldPath = (Get-ItemProperty -Path "$Reg" -Name PATH).Path
