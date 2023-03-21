@@ -68,7 +68,7 @@ noirup --path ./git/noir
 
 ## Github Action
 
-This action is in early development and so will likely experience breaking changes. It's recommended to pin to a particular commit.
+This action is in early development and so will likely experience breaking changes. It's recommended to pin to a particular release.
 
 ---
 
