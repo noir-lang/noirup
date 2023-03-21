@@ -55,6 +55,8 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 
     # Specify the current script path and name as a parameter with added scope and support for scripts with spaces in it's path
     $newProcess.Arguments = $myInvocation.MyCommand.Definition;
+    $newProcess.RedirectStandardOutput = true;
+    $newProcess.RedirectStandardError = true;
 
     # Indicate that the process should be elevated
     $newProcess.Verb = "runas";
