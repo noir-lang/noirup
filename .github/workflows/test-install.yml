@@ -15,12 +15,17 @@ jobs:
       - name: Checkout project
         uses: actions/checkout@v3
 
-      - name: Try install
+      - name: Try install on Linux & Darwin
         if: matrix.os != 'windows-latest'
         run: |
           ./install
 
-      - name: Try install
+      - name: Try install on Windows
         if: matrix.os == 'windows-latest'
         run: |
           iex ./install-windows
+
+      - name: Try noirup on Linux & Darwin
+        if: matrix.os != 'windows-latest'
+        run: |
+          noirup
