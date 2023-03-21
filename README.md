@@ -88,7 +88,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: noir-lang/noirup@v0.1.0
+      - uses: noir-lang/noirup@v0.1.1
         with:
           version: 0.3.2
       - run: nargo test
