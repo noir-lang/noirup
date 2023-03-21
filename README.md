@@ -108,7 +108,7 @@ All inputs are optional.
 <tr>
   <td><code>version</code></td>
   <td>
-    Noirup toolchain version e.g. <code>0.1.0</code>, <code>0.1.1</code>. Defaults to the latest stable release.
+    Noirup toolchain version e.g. <code>0.3.2</code>. Defaults to the latest stable release.
   </td>
 </tr>
 </table>
