@@ -65,3 +65,52 @@ noirup --path ./git/noir
 **Tip**: All flags have a single character shorthand equivalent! You can use `-v` instead of `--version`, etc.
 
 ---
+
+## Github Action
+
+This action is in early development and so will likely experience breaking changes. It's recommended to pin to a particular tagged version.
+
+---
+
+Noirup is also available as a GitHub action to allow easy installation of the Noir toolchain using noirup.
+
+<br>
+
+## Example workflow
+
+```yaml
+name: test suite
+on: [push, pull_request]
+
+jobs:
+  test:
+    name: nargo test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: noir-lang/noirup@v0.1.0
+        with:
+          version: 0.3.2
+      - run: nargo test
+```
+
+<br>
+
+## Inputs
+
+All inputs are optional.
+
+<table>
+<tr>
+  <th>Name</th>
+  <th>Description</th>
+</tr>
+<tr>
+  <td><code>version</code></td>
+  <td>
+    Noirup toolchain version e.g. <code>0.3.2</code>. Defaults to the latest stable release.
+  </td>
+</tr>
+</table>
+
+<br>

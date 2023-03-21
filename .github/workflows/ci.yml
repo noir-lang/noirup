@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  schedule: 
+   - cron: "40 2 * * *"  # Run 40 mins after nightly noir release (which happens at 2 AM UTC)
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    name: Noir ${{matrix.toolchain}} on ${{matrix.os == 'ubuntu' && 'Linux' || matrix.os == 'macos' && 'macOS' || matrix.os == 'windows' && 'Windows' || '???'}}
+    runs-on: ${{matrix.os}}-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu, macos]
+        toolchain: [stable, nightly, 0.1.0, 0.1.1, 0.2.0, 0.3.0]
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./
+        name: Run noir-lang/noirup
+        id: version
+        with:
+          toolchain: ${{matrix.toolchain}}
+      - run: nargo --version
+      - run: nargo new project
+      - run: nargo check
+        working-directory: ./project
+      - run: nargo compile test-circuit
+        working-directory: ./project
+      - run: nargo test
+        if: matrix.toolchain != '0.1.0'
+        working-directory: ./project
+      
