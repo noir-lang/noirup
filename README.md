@@ -68,11 +68,11 @@ noirup --path ./git/noir
 
 ## Github Action
 
-This action is in early development and so will likely experience breaking changes. It's recommended to pin to a particular release.
+This action is in early development and so will likely experience breaking changes. It's recommended to pin to a particular tagged version.
 
 ---
 
-Noirup is also available as a Github action to allow easy installation of the Noir toolchain using noirup. It is designed for one-line concise usage and good defaults.
+Noirup is also available as a GitHub action to allow easy installation of the Noir toolchain using noirup.
 
 <br>
 
@@ -88,9 +88,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: noir-lang/noirup@master
+      - uses: noir-lang/noirup@0.1.0
         with:
-          version: 0.1.1
+          version: 0.3.2
       - run: nargo test
 ```
 
