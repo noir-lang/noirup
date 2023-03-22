@@ -96,7 +96,7 @@ main() {
 
       RELEASE_URL="https://github.com/${NOIRUP_REPO}/releases/latest/download"
     else
-      NOIRUP_VERSION=${NOIRUP_VERSION-nightly}
+      NOIRUP_VERSION=${NOIRUP_VERSION-stable}
       NOIRUP_TAG=$NOIRUP_VERSION
 
       # Normalize versions (handle channels, versions without v prefix)
