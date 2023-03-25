@@ -43,7 +43,6 @@ runs:
       shell: bash
       run: |
         mkdir -p $HOME/.nargo/bin
-        chmod +x $HOME/.nargo/bin
         echo "${HOME}/.nargo/bin" >> $GITHUB_PATH
 
     - name: Run Noirup
