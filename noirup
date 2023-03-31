@@ -147,7 +147,7 @@ main() {
     fi
     # Build the repo and install it locally to the .nargo bin directory.
     # --root appends /bin to the directory it is given, so we pass NARGO_HOME.
-    RUSTFLAGS="-C target-cpu=native" ensure cargo install --path ./crates/nargo --bins --locked --force --root $NARGO_HOME
+    RUSTFLAGS="-C target-cpu=native" ensure cargo install --path ./crates/nargo_cli --bins --locked --force --root $NARGO_HOME
 
   fi
 
