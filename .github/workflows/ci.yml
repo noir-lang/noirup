@@ -12,7 +12,42 @@ permissions:
 
 jobs:
   install:
-    name: Noir ${{matrix.toolchain}} on ${{matrix.os == 'ubuntu' && 'Linux' || matrix.os == 'macos' && 'macOS' || matrix.os == 'windows' && 'Windows' || '???'}}
+    name: Noir ${{matrix.toolchain}} (CLI) on ${{matrix.os == 'ubuntu' && 'Linux' || matrix.os == 'macos' && 'macOS' || matrix.os == 'windows' && 'Windows' || '???'}}
+    runs-on: ${{matrix.os}}-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu, macos]
+        toolchain: [stable, nightly, 0.1.0, 0.1.1, 0.2.0, 0.3.0]
+    timeout-minutes: 45
+    steps:
+      - name: Parse toolchain
+        id: parse
+        run: |
+          : parse toolchain version
+          if [[ $toolchain == "stable" ]]; then
+            : By default, noirup installs the latest stable version
+          elif [[ $toolchain == "nightly" ]]; then
+            echo "toolchain="--nightly"" >> $GITHUB_OUTPUT
+          else
+            echo "toolchain="--version $toolchain"" >> $GITHUB_OUTPUT
+          fi
+        env:
+          toolchain: ${{matrix.toolchain}}
+      
+      - name: Install noirup
+        run: |
+          curl -L $INSTALL_URL | bash
+          echo "${HOME}/.nargo/bin" >> $GITHUB_PATH
+        env:
+          INSTALL_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ github.head_ref || github.ref_name }}/install
+      - name: Install nargo with noirup
+        run: noirup ${{steps.parse.outputs.toolchain}} 
+      - name: Check nargo installation
+        run: nargo --version
+
+  install-action:
+    name: Noir ${{matrix.toolchain}} (GH action) on ${{matrix.os == 'ubuntu' && 'Linux' || matrix.os == 'macos' && 'macOS' || matrix.os == 'windows' && 'Windows' || '???'}}
     runs-on: ${{matrix.os}}-latest
     strategy:
       fail-fast: false
