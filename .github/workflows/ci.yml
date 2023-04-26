@@ -66,6 +66,15 @@ jobs:
         env:
           INSTALL_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ github.head_ref || github.ref_name }}/install
           NOIRUP_BIN_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ github.head_ref || github.ref_name }}/noirup
+      
+      - name: Install Barretenberg dependencies
+        if: matrix.os == 'ubuntu'
+        run: sudo apt update && sudo apt install clang lld cmake libomp-dev
+      
+      - name: Install Barretenberg dependencies
+        if: matrix.os == 'macos'
+        run: brew install cmake llvm libomp
+      
       - name: Install nargo from source with noirup
         run: noirup $toolchain
         env:
