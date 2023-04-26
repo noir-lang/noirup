@@ -74,7 +74,6 @@ jobs:
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
-            ~/.nargo/**/target/
           key: ${{ runner.os }}-cargo-${{ matrix.version }}-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install Barretenberg dependencies
