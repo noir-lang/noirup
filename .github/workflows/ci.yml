@@ -67,6 +67,16 @@ jobs:
           INSTALL_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ github.head_ref || github.ref_name }}/install
           NOIRUP_BIN_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ github.head_ref || github.ref_name }}/noirup
       
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            ~/.nargo/**/target/
+          key: ${{ runner.os }}-cargo-${{ matrix.version }}-${{ hashFiles('**/Cargo.lock') }}
+
       - name: Install Barretenberg dependencies
         if: matrix.os == 'ubuntu'
         run: sudo apt update && sudo apt install clang lld cmake libomp-dev
