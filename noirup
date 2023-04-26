@@ -53,8 +53,8 @@ main() {
     # Remove prior installations if they exist
     rm -f "$NARGO_BIN_DIR/nargo"
 
-    # Symlink from local repo binaries to bin dir
-    ensure ln -s "$PWD/target/release/nargo" "$NARGO_BIN_DIR/nargo"
+    # Move the binary into the `nargo/bin` directory
+    ensure mv "$PWD/target/release/nargo" "$NARGO_BIN_DIR/nargo"
 
     say "done"
     exit 0
@@ -145,9 +145,14 @@ main() {
       say "installing at commit ${NOIRUP_COMMIT}"
       ensure git checkout ${NOIRUP_COMMIT}
     fi
-    # Build the repo and install it locally to the .nargo bin directory.
-    # --root appends /bin to the directory it is given, so we pass NARGO_HOME.
-    RUSTFLAGS="-C target-cpu=native" ensure cargo install --path ./crates/nargo --bins --locked --force --root $NARGO_HOME
+
+    RUSTFLAGS="-C target-cpu=native" ensure cargo build --release
+
+    # Remove prior installations if they exist
+    rm -f "$NARGO_BIN_DIR/nargo"
+
+    # Move the binary into the `nargo/bin` directory
+    ensure mv "$PWD/target/release/nargo" "$NARGO_BIN_DIR/nargo"
 
   fi
 
