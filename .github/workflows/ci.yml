@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu, macos]
-        toolchain: [stable, nightly, 0.1.0, 0.1.1, 0.2.0, 0.3.0]
+        toolchain: [stable, nightly, 0.1.0, 0.1.1, 0.2.0, 0.3.0, 0.4.1]
     timeout-minutes: 45
     steps:
       - name: Parse toolchain
@@ -41,8 +41,35 @@ jobs:
           echo "${HOME}/.nargo/bin" >> $GITHUB_PATH
         env:
           INSTALL_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ github.head_ref || github.ref_name }}/install
+          NOIRUP_BIN_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ github.head_ref || github.ref_name }}/noirup
       - name: Install nargo with noirup
         run: noirup ${{steps.parse.outputs.toolchain}} 
+      - name: Check nargo installation
+        run: nargo --version
+
+  install-source:
+    name: Noir from Source ${{matrix.toolchain}} (CLI) on ${{matrix.os == 'ubuntu' && 'Linux' || matrix.os == 'macos' && 'macOS' || matrix.os == 'windows' && 'Windows' || '???'}}
+    runs-on: ${{matrix.os}}-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu, macos]
+        # Installing from source can technically target any commit.
+        # However, we only guarantee that noirup will build release commits.
+        version: [0.1.0, 0.1.1, 0.2.0, 0.3.0, 0.4.1]
+    timeout-minutes: 45
+    steps:
+      - name: Install noirup
+        run: |
+          curl -L $INSTALL_URL | bash
+          echo "${HOME}/.nargo/bin" >> $GITHUB_PATH
+        env:
+          INSTALL_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ github.head_ref || github.ref_name }}/install
+          NOIRUP_BIN_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ github.head_ref || github.ref_name }}/noirup
+      - name: Install nargo from source with noirup
+        run: noirup $toolchain
+        env:
+          toolchain: -b tags/v${{matrix.version}}
       - name: Check nargo installation
         run: nargo --version
 
@@ -53,7 +80,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu, macos]
-        toolchain: [stable, nightly, 0.1.0, 0.1.1, 0.2.0, 0.3.0]
+        toolchain: [stable, nightly, 0.1.0, 0.1.1, 0.2.0, 0.3.0, 0.4.1]
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v3
