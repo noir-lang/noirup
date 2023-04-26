@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/noir-lang/noirup/compare/v0.1.1...v0.1.2) (2023-04-26)
+
+
+### Bug Fixes
+
+* remove usage of `cargo install` and prefer `cargo build` ([#24](https://github.com/noir-lang/noirup/issues/24)) ([c6c90a5](https://github.com/noir-lang/noirup/commit/c6c90a5c9135c0bc707f1318d313a364c66350e6))
+
 ## [0.1.1](https://github.com/noir-lang/noirup/compare/v0.1.0...v0.1.1) (2023-03-21)
 
 
