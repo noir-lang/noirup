@@ -6,13 +6,13 @@ echo Installing noirup...
 NARGO_HOME=${NARGO_HOME-"$HOME/.nargo"}
 NARGO_BIN_DIR="$NARGO_HOME/bin"
 
-BIN_URL="https://github.com/noir-lang/noirup/releases/latest/download/noirup"
-BIN_PATH="$NARGO_BIN_DIR/noirup"
+NOIRUP_BIN_URL=${NOIRUP_BIN_URL-"https://github.com/noir-lang/noirup/releases/latest/download/noirup"}
+NOIRUP_BIN_PATH="$NARGO_BIN_DIR/noirup"
 
 # Create the .nargo bin directory and noirup binary if it doesn't exist.
 mkdir -p $NARGO_BIN_DIR
-curl -# -L $BIN_URL -o $BIN_PATH
-chmod +x $BIN_PATH
+curl -# -L $NOIRUP_BIN_URL -o $NOIRUP_BIN_PATH
+chmod +x $NOIRUP_BIN_PATH
 
 # Store the correct profile file (i.e. .profile for bash or .zshrc for ZSH).
 case $SHELL in
