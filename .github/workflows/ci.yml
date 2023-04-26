@@ -48,7 +48,7 @@ jobs:
         run: nargo --version
 
   install-source:
-    name: Noir from Source ${{matrix.toolchain}} (CLI) on ${{matrix.os == 'ubuntu' && 'Linux' || matrix.os == 'macos' && 'macOS' || matrix.os == 'windows' && 'Windows' || '???'}}
+    name: Noir ${{matrix.version}} (from source) on ${{matrix.os == 'ubuntu' && 'Linux' || matrix.os == 'macos' && 'macOS' || matrix.os == 'windows' && 'Windows' || '???'}}
     runs-on: ${{matrix.os}}-latest
     strategy:
       fail-fast: false
