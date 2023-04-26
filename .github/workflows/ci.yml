@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu, macos]
-        toolchain: [stable, nightly, 0.1.0, 0.1.1, 0.2.0, 0.3.0]
+        toolchain: [stable, nightly, 0.1.0, 0.1.1, 0.2.0, 0.3.0, 0.4.2, 0.5.0]
     timeout-minutes: 45
     steps:
       - name: Parse toolchain
@@ -53,7 +53,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu, macos]
-        toolchain: [stable, nightly, 0.1.0, 0.1.1, 0.2.0, 0.3.0]
+        toolchain: [stable, nightly, 0.1.0, 0.1.1, 0.2.0, 0.3.0, 0.4.2, 0.5.0]
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v3
