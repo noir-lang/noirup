@@ -4,8 +4,8 @@ on:
   push:
     branches: [master]
   pull_request:
-  schedule: 
-   - cron: "40 2 * * *"  # Run 40 mins after nightly noir release (which happens at 2 AM UTC)
+  schedule:
+    - cron: "40 2 * * *" # Run 40 mins after nightly noir release (which happens at 2 AM UTC)
 
 permissions:
   contents: read
@@ -34,16 +34,16 @@ jobs:
           fi
         env:
           toolchain: ${{matrix.toolchain}}
-      
+
       - name: Install noirup
         run: |
           curl -L $INSTALL_URL | bash
           echo "${HOME}/.nargo/bin" >> $GITHUB_PATH
         env:
-          INSTALL_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ github.head_ref || github.ref_name }}/install
-          NOIRUP_BIN_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ github.head_ref || github.ref_name }}/noirup
+          INSTALL_URL: https://raw.githubusercontent.com/${{ github.event.pull_request.head.repo.full_name || github.repository }}/${{ github.head_ref || github.ref_name }}/install
+          NOIRUP_BIN_URL: https://raw.githubusercontent.com/${{ github.event.pull_request.head.repo.full_name || github.repository }}/${{ github.head_ref || github.ref_name }}/noirup
       - name: Install nargo with noirup
-        run: noirup ${{steps.parse.outputs.toolchain}} 
+        run: noirup ${{steps.parse.outputs.toolchain}}
       - name: Check nargo installation
         run: nargo --version
 
@@ -64,9 +64,9 @@ jobs:
           curl -L $INSTALL_URL | bash
           echo "${HOME}/.nargo/bin" >> $GITHUB_PATH
         env:
-          INSTALL_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ github.head_ref || github.ref_name }}/install
-          NOIRUP_BIN_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ github.head_ref || github.ref_name }}/noirup
-      
+          INSTALL_URL: https://raw.githubusercontent.com/${{ github.event.pull_request.head.repo.full_name || github.repository }}/${{ github.head_ref || github.ref_name }}/install
+          NOIRUP_BIN_URL: https://raw.githubusercontent.com/${{ github.event.pull_request.head.repo.full_name || github.repository }}/${{ github.head_ref || github.ref_name }}/noirup
+
       - uses: actions/cache@v3
         with:
           path: |
@@ -79,11 +79,11 @@ jobs:
       - name: Install Barretenberg dependencies
         if: matrix.os == 'ubuntu'
         run: sudo apt update && sudo apt install clang lld cmake libomp-dev
-      
+
       - name: Install Barretenberg dependencies
         if: matrix.os == 'macos'
         run: brew install cmake llvm libomp
-      
+
       - name: Install nargo from source with noirup
         run: noirup $toolchain
         env:
@@ -116,4 +116,3 @@ jobs:
       - run: nargo test
         if: matrix.toolchain != '0.1.0'
         working-directory: ./project
-      
