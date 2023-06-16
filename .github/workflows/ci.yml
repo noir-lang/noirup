@@ -10,6 +10,10 @@ on:
 permissions:
   contents: read
 
+env:
+  REPO: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+  REF: ${{ github.head_ref || github.ref_name }}
+
 jobs:
   install:
     name: Noir ${{matrix.toolchain}} (CLI) on ${{matrix.os == 'ubuntu' && 'Linux' || matrix.os == 'macos' && 'macOS' || matrix.os == 'windows' && 'Windows' || '???'}}
@@ -40,8 +44,8 @@ jobs:
           curl -L $INSTALL_URL | bash
           echo "${HOME}/.nargo/bin" >> $GITHUB_PATH
         env:
-          INSTALL_URL: https://raw.githubusercontent.com/${{ github.event.pull_request.head.repo.full_name || github.repository }}/${{ github.head_ref || github.ref_name }}/install
-          NOIRUP_BIN_URL: https://raw.githubusercontent.com/${{ github.event.pull_request.head.repo.full_name || github.repository }}/${{ github.head_ref || github.ref_name }}/noirup
+          INSTALL_URL: https://raw.githubusercontent.com/${{ env.REPO }}/${{ env.REF }}/install
+          NOIRUP_BIN_URL: https://raw.githubusercontent.com/${{ env.REPO }}/${{ env.REF }}/noirup
       - name: Install nargo with noirup
         run: noirup ${{steps.parse.outputs.toolchain}}
       - name: Check nargo installation
@@ -64,8 +68,8 @@ jobs:
           curl -L $INSTALL_URL | bash
           echo "${HOME}/.nargo/bin" >> $GITHUB_PATH
         env:
-          INSTALL_URL: https://raw.githubusercontent.com/${{ github.event.pull_request.head.repo.full_name || github.repository }}/${{ github.head_ref || github.ref_name }}/install
-          NOIRUP_BIN_URL: https://raw.githubusercontent.com/${{ github.event.pull_request.head.repo.full_name || github.repository }}/${{ github.head_ref || github.ref_name }}/noirup
+          INSTALL_URL: https://raw.githubusercontent.com/${{ env.REPO }}/${{ env.REF }}/install
+          NOIRUP_BIN_URL: https://raw.githubusercontent.com/${{ env.REPO }}/${{ env.REF }}/noirup
 
       - uses: actions/cache@v3
         with:
