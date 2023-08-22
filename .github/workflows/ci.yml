@@ -115,8 +115,22 @@ jobs:
       - run: nargo new project
       - run: nargo check
         working-directory: ./project
-      - run: nargo compile test-circuit
+      - run: |
+          if [[ "${{ matrix.toolchain }}" == "stable" || "${{ matrix.toolchain }}" == "nightly" ]]; then
+            nargo compile
+          else
+            minor=$(echo "${{ matrix.toolchain }}" | cut -d '.' -f 2)
+
+            # The version in which the compile syntax changed
+            if [ "$minor" -lt 10 ]; then
+              nargo compile test-circuit
+            else
+              nargo compile
+            fi
+          fi
+        name: nargo compile
         working-directory: ./project
+        shell: bash
       - run: nargo test
         if: matrix.toolchain != '0.1.0'
         working-directory: ./project
