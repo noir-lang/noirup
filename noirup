@@ -59,7 +59,7 @@ main() {
     # Enter local repo and build
     say "installing from $NOIRUP_LOCAL_REPO"
     cd $NOIRUP_LOCAL_REPO
-    RUSTFLAGS="-C target-cpu=native" ensure cargo build --release --no-default-features $FEATURES # need 4 speed
+    RUSTFLAGS="-C target-cpu=native" ensure cargo build --release $FEATURES # need 4 speed
 
     # Remove prior installations if they exist
     rm -f "$NARGO_BIN_DIR/nargo"
@@ -161,7 +161,7 @@ main() {
       ensure git checkout ${NOIRUP_COMMIT}
     fi
 
-    RUSTFLAGS="-C target-cpu=native" ensure cargo build --release --no-default-features $FEATURES
+    RUSTFLAGS="-C target-cpu=native" ensure cargo build --release $FEATURES
 
     # Remove prior installations if they exist
     rm -f "$NARGO_BIN_DIR/nargo"
