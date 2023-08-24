@@ -16,7 +16,7 @@ main() {
       -r|--repo)        shift; NOIRUP_REPO=$1;;
       -b|--branch)      shift; NOIRUP_BRANCH=$1;;
       -v|--version)     shift; NOIRUP_VERSION=$1;;
-      -f|--features)     shift; NOIRUP_FEATURES=$1;;
+      -f|--features)    shift; NOIRUP_FEATURES=$1;;
       -p|--path)        shift; NOIRUP_LOCAL_REPO=$1;;
       -P|--pr)          shift; NOIRUP_PR=$1;;
       -C|--commit)      shift; NOIRUP_COMMIT=$1;;
@@ -29,7 +29,15 @@ main() {
     esac; shift
   done
 
-  FEATURES=${NOIRUP_FEATURES:-"default"}
+  # Input string is a space delimited list of features 
+  # Build a string of feature flags to pass to cargo
+  FEATURES=""
+  if [ -n "$NOIRUP_FEATURES" ]; then
+    # "aztec bn254" -> "--features aztec --features bn254"
+    for feature in $NOIRUP_FEATURES; do
+        FEATURES+="--features $feature "
+    done
+  fi
 
   if [ -n "$NOIRUP_PR" ]; then
     if [ -z "$NOIRUP_BRANCH" ]; then
@@ -51,7 +59,7 @@ main() {
     # Enter local repo and build
     say "installing from $NOIRUP_LOCAL_REPO"
     cd $NOIRUP_LOCAL_REPO
-    RUSTFLAGS="-C target-cpu=native" ensure cargo build --release --features $FEATURES # need 4 speed
+    RUSTFLAGS="-C target-cpu=native" ensure cargo build --release --no-default-features $FEATURES # need 4 speed
 
     # Remove prior installations if they exist
     rm -f "$NARGO_BIN_DIR/nargo"
@@ -61,6 +69,10 @@ main() {
 
     say "done"
     exit 0
+  fi
+
+  if [ -n "${NOIRUP_FEATURES}" ]; then
+      echo "Warning: [-f | --features] flag has no effect when installing a prebuilt binary"
   fi
 
   NOIRUP_REPO=${NOIRUP_REPO-noir-lang/noir}
@@ -149,7 +161,7 @@ main() {
       ensure git checkout ${NOIRUP_COMMIT}
     fi
 
-    RUSTFLAGS="-C target-cpu=native" ensure cargo build --release --features $FEATURES
+    RUSTFLAGS="-C target-cpu=native" ensure cargo build --release --no-default-features $FEATURES
 
     # Remove prior installations if they exist
     rm -f "$NARGO_BIN_DIR/nargo"
@@ -180,7 +192,7 @@ OPTIONS:
     -C, --commit    Install a specific commit
     -r, --repo      Install from a remote GitHub repo (uses default branch if no other options are set)
     -p, --path      Install a local repository
-    -f, --features  Activates feature flags when building from source
+    -f, --features  Activates feature flags when building from source: "feature1 feature2"
 EOF
 }
 
