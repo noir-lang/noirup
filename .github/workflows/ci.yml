@@ -116,17 +116,17 @@ jobs:
       - run: nargo check
         working-directory: ./project
       - run: |
-          if [[ "${{ matrix.toolchain }}" == "stable" || "${{ matrix.toolchain }}" == "nightly" ]]; then
-            nargo compile
-          else
-            minor=$(echo "${{ matrix.toolchain }}" | cut -d '.' -f 2)
+          # Extract the minor version number from the version output
+          version=$(nargo --version)
+          version="${version#* }"
+          version="${version%% (*}"
+          minor=$(echo $version | cut -d '.' -f 2)
 
-            # The version in which the compile syntax changed
-            if [ "$minor" -lt 10 ]; then
-              nargo compile test-circuit
-            else
-              nargo compile
-            fi
+          # The version in which the compile syntax changed
+          if [ "$minor" -lt 10 ]; then
+            nargo compile test-circuit
+          else
+            nargo compile
           fi
         name: nargo compile
         working-directory: ./project
