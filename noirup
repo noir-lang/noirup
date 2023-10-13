@@ -3,6 +3,7 @@ set -e
 
 NARGO_HOME=${NARGO_HOME-"$HOME/.nargo"}
 NARGO_BIN_DIR="$NARGO_HOME/bin"
+ACVM_BACKEND_BARRETENBERG="$NARGO_HOME/backends/acvm-backend-barretenberg"
 
 main() {
   need_cmd git
@@ -130,6 +131,11 @@ main() {
     # Download the binaries tarball and unpack it into the .nargo bin directory.
     say "downloading latest nargo to '$NARGO_BIN_DIR'"
     ensure curl -# -L $BIN_TARBALL_URL | tar -xzC $NARGO_BIN_DIR
+
+    if [[ -d "$ACVM_BACKEND_BARRETENBERG" ]]; then
+        echo "Cleaning Backend Barretenberg installation directory $ACVM_BACKEND_BARRETENBERG..."
+        rm -rf "$ACVM_BACKEND_BARRETENBERG" || true
+    fi
 
     # Prior to v0.3.0, Nargo and the std lib were distributed separated.
     ensure rm -rf "$CONFIG_DIR/noir-lang/std"
