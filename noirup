@@ -20,6 +20,10 @@ main() {
       -p|--path)        shift; NOIRUP_LOCAL_REPO=$1;;
       -P|--pr)          shift; NOIRUP_PR=$1;;
       -C|--commit)      shift; NOIRUP_COMMIT=$1;;
+      -l|--list)
+        list
+        exit 0
+        ;;
       -h|--help)
         usage
         exit 0
@@ -193,7 +197,13 @@ OPTIONS:
     -r, --repo      Install from a remote GitHub repo (uses default branch if no other options are set)
     -p, --path      Install a local repository
     -f, --features  Activates feature flags when building from source: "feature1 feature2"
+    -l, --list      List available versions of Noir
 EOF
+}
+
+list() {
+  # Fetch, sort, and print tags from the noir repository
+  ensure git ls-remote --tags --refs https://github.com/noir-lang/noir | awk -F'/' '{print $3}' | grep '^v' | sort -rV
 }
 
 say() {
