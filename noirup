@@ -186,6 +186,7 @@ USAGE:
     noirup <OPTIONS>
 OPTIONS:
     -h, --help      Print help information
+    -n, --nightly   Install the nightly version
     -v, --version   Install a specific version
     -b, --branch    Install a specific branch
     -P, --pr        Install a specific Pull Request
