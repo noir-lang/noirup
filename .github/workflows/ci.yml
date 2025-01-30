@@ -82,6 +82,7 @@ jobs:
 
   install-source:
     name: Noir ${{matrix.version}} (from source) on ${{matrix.os == 'ubuntu' && 'Linux' || matrix.os == 'macos' && 'macOS' || matrix.os == 'windows' && 'Windows' || '???'}}
+    needs: [noir-version-list]
     runs-on: ${{matrix.os}}-latest
     strategy:
       fail-fast: false
@@ -118,6 +119,7 @@ jobs:
 
   install-action:
     name: Noir ${{matrix.toolchain}} (GH action) on ${{matrix.os == 'ubuntu' && 'Linux' || matrix.os == 'macos' && 'macOS' || matrix.os == 'windows' && 'Windows' || '???'}}
+    needs: [noir-version-list]
     runs-on: ${{matrix.os}}-latest
     strategy:
       fail-fast: false
