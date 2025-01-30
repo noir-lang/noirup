@@ -113,7 +113,7 @@ jobs:
       - name: Install nargo from source with noirup
         run: noirup $toolchain
         env:
-          toolchain: -b tags/v${{matrix.version}}
+          toolchain: -b tags/${{matrix.version}}
       - name: Check nargo installation
         run: nargo --version
 
@@ -152,10 +152,11 @@ jobs:
           version=$(nargo --version)
           version="${version#* }"
           version="${version%% (*}"
+          minor=$(echo $version | cut -d '.' -f 1)
           minor=$(echo $version | cut -d '.' -f 2)
 
           # The version in which the compile syntax changed
-          if [ "$minor" -lt 10 ]; then
+          if [ "$major" -lt 1 ] & [ "$minor" -lt 10 ]; then
             nargo compile test-circuit
           else
             nargo compile
