@@ -13,16 +13,45 @@ permissions:
 env:
   REPO: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
   REF: ${{ github.head_ref || github.ref_name }}
+  MINIMUM_NOIR_VERSION: v0.1.0
 
 jobs:
+  noir-version-list:
+    name: Query supported Noir versions
+    runs-on: ubuntu-latest
+    outputs:
+      noir_versions: ${{ steps.get_versions.outputs.versions }}
+
+    steps:
+      - name: Checkout sources
+        id: get_versions
+        run: |         
+          # gh returns the Noir releases in reverse chronological order so we keep all releases published after the minimum supported version.
+          VERSIONS=$(gh release list -R noir-lang/noir --exclude-pre-releases --json tagName -q 'map(.tagName) | index(env.MINIMUM_NOIR_VERSION) as $index | if $index then .[0:$index+1] else [env.MINIMUM_NOIR_VERSION] end')
+          echo "versions=$VERSIONS"
+          echo "versions=$VERSIONS" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+
   install:
     name: Noir ${{matrix.toolchain}} (CLI) on ${{matrix.os == 'ubuntu' && 'Linux' || matrix.os == 'macos' && 'macOS' || matrix.os == 'windows' && 'Windows' || '???'}}
+    needs: [noir-version-list]
     runs-on: ${{matrix.os}}-latest
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu, macos]
-        toolchain: [stable, nightly, 0.1.0, 0.1.1, 0.2.0, 0.3.0, 0.4.1]
+        toolchain: ${{ fromJson( needs.noir-version-list.outputs.noir_versions )}}
+        include:
+          - os: ubuntu 
+            toolchain: nightly
+          - os: ubuntu 
+            toolchain: stable
+          - os: macos 
+            toolchain: nightly
+          - os: macos 
+            toolchain: stable
     timeout-minutes: 45
     steps:
       - name: Parse toolchain
@@ -57,10 +86,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu, macos]
         # Installing from source can technically target any commit.
         # However, we only guarantee that noirup will build release commits.
-        version: [0.1.0, 0.1.1, 0.2.0, 0.3.0, 0.4.1]
+        os: [ubuntu, macos]
+        version: ${{ fromJson( needs.noir-version-list.outputs.noir_versions )}}
     timeout-minutes: 45
     steps:
       - name: Install noirup
@@ -80,14 +109,6 @@ jobs:
             ~/.cargo/git/db/
           key: ${{ runner.os }}-cargo-${{ matrix.version }}
 
-      - name: Install Barretenberg dependencies
-        if: matrix.os == 'ubuntu'
-        run: sudo apt update && sudo apt install clang lld cmake libomp-dev
-
-      - name: Install Barretenberg dependencies
-        if: matrix.os == 'macos'
-        run: brew install cmake llvm libomp
-
       - name: Install nargo from source with noirup
         run: noirup $toolchain
         env:
@@ -102,7 +123,16 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu, macos]
-        toolchain: [stable, nightly, 0.1.0, 0.1.1, 0.2.0, 0.3.0, 0.4.1]
+        toolchain: ${{ fromJson( needs.noir-version-list.outputs.noir_versions )}}
+        include:
+          - os: ubuntu 
+            toolchain: nightly
+          - os: ubuntu 
+            toolchain: stable
+          - os: macos 
+            toolchain: nightly
+          - os: macos 
+            toolchain: stable
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v3
