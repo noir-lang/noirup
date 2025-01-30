@@ -156,7 +156,7 @@ jobs:
           minor=$(echo $version | cut -d '.' -f 2)
 
           # The version in which the compile syntax changed
-          if [ "$major" -lt 1 ] & [ "$minor" -lt 10 ]; then
+          if [[ "$major" == 1  &&  "$minor" -lt 10 ]]; then
             nargo compile test-circuit
           else
             nargo compile
