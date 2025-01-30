@@ -13,7 +13,7 @@ permissions:
 env:
   REPO: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
   REF: ${{ github.head_ref || github.ref_name }}
-  MINIMUM_NOIR_VERSION: v0.3.1
+  MINIMUM_NOIR_VERSION: v0.16.0
 
 jobs:
   noir-version-list:
@@ -147,23 +147,7 @@ jobs:
       - run: nargo new project
       - run: nargo check
         working-directory: ./project
-      - run: |
-          # Extract the minor version number from the version output
-          version=$(nargo --version)
-          version="${version#* }"
-          version="${version%% (*}"
-          minor=$(echo $version | cut -d '.' -f 1)
-          minor=$(echo $version | cut -d '.' -f 2)
-
-          # The version in which the compile syntax changed
-          if [[ "$major" == 1  &&  "$minor" -lt 10 ]]; then
-            nargo compile test-circuit
-          else
-            nargo compile
-          fi
-        name: nargo compile
+      - run: nargo compile
         working-directory: ./project
-        shell: bash
       - run: nargo test
-        if: matrix.toolchain != '0.1.0'
         working-directory: ./project
