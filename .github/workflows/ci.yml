@@ -79,8 +79,6 @@ jobs:
         run: noirup ${{steps.parse.outputs.toolchain}}
       - name: Check nargo installation
         run: nargo --version
-      - name: Check noir-profiler installation
-        run: noir-profiler --version
 
   install-source:
     name: Noir ${{matrix.version}} (from source) on ${{matrix.os == 'ubuntu' && 'Linux' || matrix.os == 'macos' && 'macOS' || matrix.os == 'windows' && 'Windows' || '???'}}
@@ -119,7 +117,9 @@ jobs:
       - name: Check nargo installation
         run: nargo --version
       - name: Check noir-profiler installation
-        run: noir-profiler --version
+        run: |
+          echo ${{matrix.version}}
+          noir-profiler --version
 
   install-action:
     name: Noir ${{matrix.toolchain}} (GH action) on ${{matrix.os == 'ubuntu' && 'Linux' || matrix.os == 'macos' && 'macOS' || matrix.os == 'windows' && 'Windows' || '???'}}
