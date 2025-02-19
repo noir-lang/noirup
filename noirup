@@ -142,7 +142,7 @@ main() {
     # Legacy naming uses the `nargo-` for when noir-lang/noir used to only release a single nargo binary 
     # Use the legacy naming if `noir-` does not exist
     # Force curl to follow redirects with `-L`
-    if ! curl -v -L --head --fail --silent "$BIN_TARBALL_URL" >/dev/null 2>&1; then
+    if ! curl -L --head --fail --silent "$BIN_TARBALL_URL" >/dev/null 2>&1; then
         echo "got here"
         BIN_TARBALL_URL="${RELEASE_URL}/nargo-${ARCHITECTURE}-${PLATFORM}.tar.gz"
     fi
