@@ -81,7 +81,6 @@ jobs:
         run: nargo --version
       - name: Check noir-profiler installation
         run: |
-          # This check ensures compatibility with older versions of Noir
           if [ -f "${HOME}/.nargo/bin/noir-profiler" ]; then
             noir-profiler --version
           fi
@@ -124,7 +123,6 @@ jobs:
         run: nargo --version
       - name: Check noir-profiler installation
         run: |
-          # This check ensures compatibility with older versions of Noir
           if [ -f "${HOME}/.nargo/bin/noir-profiler" ]; then
             noir-profiler --version
           fi
