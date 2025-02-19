@@ -127,7 +127,14 @@ main() {
 
       RELEASE_URL="https://github.com/${NOIRUP_REPO}/releases/download/${NOIRUP_TAG}"
     fi
+    # Current name for the binary tarball created by Noir.   
     BIN_TARBALL_URL="${RELEASE_URL}/noir-${ARCHITECTURE}-${PLATFORM}.tar.gz"
+    
+    # Legacy naming uses the `nargo-` for when noir-lang/noir used to only release a single nargo binary 
+    # Use the legacy naming if `noir-` does not exist
+    if ! curl --head --fail "$BIN_TARBALL_URL"; then
+        BIN_TARBALL_URL="${RELEASE_URL}/nargo-${ARCHITECTURE}-${PLATFORM}.tar.gz"
+    fi
 
     # Download the binaries tarball and unpack it into the .nargo bin directory.
     say "downloading latest Noir binaries to '$NARGO_BIN_DIR'"
