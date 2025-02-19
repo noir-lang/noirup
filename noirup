@@ -63,9 +63,11 @@ main() {
 
     # Remove prior installations if they exist
     rm -f "$NARGO_BIN_DIR/nargo"
+    rm -f "$NARGO_BIN_DIR/noir-profiler"
 
-    # Move the binary into the `nargo/bin` directory
+    # Move binaries into the `.nargo/bin` directory
     ensure mv "$PWD/target/release/nargo" "$NARGO_BIN_DIR/nargo"
+    ensure mv "$PWD/target/release/noir-profiler" "$NARGO_BIN_DIR/noir-profiler"
 
     say "done"
     exit 0
@@ -121,14 +123,14 @@ main() {
         NOIRUP_TAG="${NOIRUP_VERSION}"
       fi
 
-      say "installing nargo (version ${NOIRUP_VERSION} with tag ${NOIRUP_TAG})"
+      say "installing Noir binaries (version ${NOIRUP_VERSION} with tag ${NOIRUP_TAG})"
 
       RELEASE_URL="https://github.com/${NOIRUP_REPO}/releases/download/${NOIRUP_TAG}"
     fi
-    BIN_TARBALL_URL="${RELEASE_URL}/nargo-${ARCHITECTURE}-${PLATFORM}.tar.gz"
+    BIN_TARBALL_URL="${RELEASE_URL}/noir-${ARCHITECTURE}-${PLATFORM}.tar.gz"
 
     # Download the binaries tarball and unpack it into the .nargo bin directory.
-    say "downloading latest nargo to '$NARGO_BIN_DIR'"
+    say "downloading latest Noir binaries to '$NARGO_BIN_DIR'"
     ensure curl -# -L $BIN_TARBALL_URL | tar -xzC $NARGO_BIN_DIR
 
     # Prior to v0.3.0, Nargo and the std lib were distributed separated.
@@ -165,10 +167,11 @@ main() {
 
     # Remove prior installations if they exist
     rm -f "$NARGO_BIN_DIR/nargo"
+    rm -f "$NARGO_BIN_DIR/noir-profiler"
 
-    # Move the binary into the `nargo/bin` directory
+    # Move binaries into the `.nargo/bin` directory
     ensure mv "$PWD/target/release/nargo" "$NARGO_BIN_DIR/nargo"
-
+    ensure mv "$PWD/target/release/noir-profiler" "$NARGO_BIN_DIR/noir-profiler"
   fi
 
   if [[ $(which nargo) =~ "cargo" ]]; then
