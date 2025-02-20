@@ -81,7 +81,15 @@ jobs:
         run: nargo --version
       - name: Check noir-profiler installation
         run: |
-          if [ -f "${HOME}/.nargo/bin/noir-profiler" ]; then
+          VERSION=$(nargo --version | awk -F' = ' '/nargo version/ {print $2}')
+          # Minimum version which began releasing binaries for the `noir-profiler`.
+          MIN_VERSION="1.0.0-beta.3"
+
+          version_gte() {
+            [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" = "$2" ]
+          }
+
+          if version_gte "$VERSION" "$MIN_VERSION"; then
             noir-profiler --version
           fi
 
@@ -123,7 +131,14 @@ jobs:
         run: nargo --version
       - name: Check noir-profiler installation
         run: |
-          if [ -f "${HOME}/.nargo/bin/noir-profiler" ]; then
+          # Minimum version which began releasing binaries for the `noir-profiler`.
+          MIN_VERSION="1.0.0-beta.3"
+
+          version_gte() {
+            [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" = "$2" ]
+          }
+
+          if version_gte "${{matrix.version}}" "$MIN_VERSION"; then
             noir-profiler --version
           fi
 
@@ -161,3 +176,18 @@ jobs:
         working-directory: ./project
       - run: nargo test
         working-directory: ./project
+      - name: Check noir-profiler installation
+        working-directory: ./project
+        run: |
+          VERSION=$(nargo --version | awk -F' = ' '/nargo version/ {print $2}')
+          # Minimum version which began releasing binaries for the `noir-profiler`.
+          MIN_VERSION="1.0.0-beta.3"
+
+          version_gte() {
+            [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" = "$2" ]
+          }
+
+          if version_gte "$VERSION" "$MIN_VERSION"; then
+            noir-profiler --version
+            noir-profiler opcodes -a ./target/project.json -o ./target
+          fi
