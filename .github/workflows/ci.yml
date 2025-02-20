@@ -81,6 +81,7 @@ jobs:
         run: nargo --version
       - name: Check noir-profiler installation
         run: |
+          # Fetch the version from `nargo` as to also check the `stable` and `nightly` toolchains
           VERSION=$(nargo --version | awk -F' = ' '/nargo version/ {print $2}')
           MIN_VERSION="1.0.0-beta.3"
 
