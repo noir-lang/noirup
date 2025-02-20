@@ -132,8 +132,6 @@ jobs:
         run: nargo --version
       - name: Check noir-profiler installation
         run: |
-          # Minimum version which began releasing binaries for the `noir-profiler`
-          # Account for the extra `v` that prefixes "${{matrix.version}}"
           MIN_VERSION="v1.0.0-beta.3"
 
           version_gte() {
