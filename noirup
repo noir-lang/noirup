@@ -4,6 +4,8 @@ set -e
 NARGO_HOME=${NARGO_HOME-"$HOME/.nargo"}
 NARGO_BIN_DIR="$NARGO_HOME/bin"
 
+BINARIES=("nargo" "noir-profiler" "noir-inspector")
+
 main() {
   need_cmd git
   need_cmd curl
@@ -62,10 +64,19 @@ main() {
     RUSTFLAGS="-C target-cpu=native" ensure cargo build --release $FEATURES # need 4 speed
 
     # Remove prior installations if they exist
-    rm -f "$NARGO_BIN_DIR/nargo"
+    for bin in "${BINARIES[@]}"; do
+      rm -f "$NARGO_BIN_DIR/$bin"
+    done
 
-    # Move the binary into the `nargo/bin` directory
-    ensure mv "$PWD/target/release/nargo" "$NARGO_BIN_DIR/nargo"
+    # Move binaries into the `.nargo/bin` directory
+    for bin in "${BINARIES[@]}"; do
+        # Move the binary only if it exists.
+        # This ensures compatibility with older versions of Noir, 
+        # which may not include all binaries listed.
+        if [ -f "$PWD/target/release/$bin" ]; then
+            ensure mv "$PWD/target/release/$bin" "$NARGO_BIN_DIR/$bin"
+        fi
+    done
 
     say "done"
     exit 0
@@ -121,14 +132,22 @@ main() {
         NOIRUP_TAG="${NOIRUP_VERSION}"
       fi
 
-      say "installing nargo (version ${NOIRUP_VERSION} with tag ${NOIRUP_TAG})"
+      say "installing Noir binaries (version ${NOIRUP_VERSION} with tag ${NOIRUP_TAG})"
 
       RELEASE_URL="https://github.com/${NOIRUP_REPO}/releases/download/${NOIRUP_TAG}"
     fi
-    BIN_TARBALL_URL="${RELEASE_URL}/nargo-${ARCHITECTURE}-${PLATFORM}.tar.gz"
+    # Current name for the binary tarball created by Noir.   
+    BIN_TARBALL_URL="${RELEASE_URL}/noir-${ARCHITECTURE}-${PLATFORM}.tar.gz"
+    
+    # Legacy naming uses the `nargo-` for when noir-lang/noir used to only release a single nargo binary 
+    # Use the legacy naming if `noir-` does not exist
+    # Force curl to follow redirects with `-L`
+    if ! curl -L --head --fail --silent "$BIN_TARBALL_URL" >/dev/null 2>&1; then
+        BIN_TARBALL_URL="${RELEASE_URL}/nargo-${ARCHITECTURE}-${PLATFORM}.tar.gz"
+    fi
 
     # Download the binaries tarball and unpack it into the .nargo bin directory.
-    say "downloading latest nargo to '$NARGO_BIN_DIR'"
+    say "downloading latest Noir binaries to '$NARGO_BIN_DIR'"
     ensure curl -# -L $BIN_TARBALL_URL | tar -xzC $NARGO_BIN_DIR
 
     # Prior to v0.3.0, Nargo and the std lib were distributed separated.
@@ -163,12 +182,22 @@ main() {
 
     RUSTFLAGS="-C target-cpu=native" ensure cargo build --release $FEATURES
 
+
     # Remove prior installations if they exist
-    rm -f "$NARGO_BIN_DIR/nargo"
+    for bin in "${BINARIES[@]}"; do
+      rm -f "$NARGO_BIN_DIR/$bin"
+    done
 
-    # Move the binary into the `nargo/bin` directory
-    ensure mv "$PWD/target/release/nargo" "$NARGO_BIN_DIR/nargo"
-
+    # Move binaries into the `.nargo/bin` directory
+    for bin in "${BINARIES[@]}"; do
+        # Move the binary only if it exists.
+        # This ensures compatibility with older versions of Noir, 
+        # which may not include all binaries listed.
+        if [ -f "$PWD/target/release/$bin" ]; then
+            ensure mv "$PWD/target/release/$bin" "$NARGO_BIN_DIR/$bin"
+        fi
+    done
+  
   fi
 
   if [[ $(which nargo) =~ "cargo" ]]; then

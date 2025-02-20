@@ -79,6 +79,32 @@ jobs:
         run: noirup ${{steps.parse.outputs.toolchain}}
       - name: Check nargo installation
         run: nargo --version
+      - name: Check noir-inspector installation
+        run: |
+          # Fetch the version from `nargo` as to also check the `stable` and `nightly` toolchains
+          VERSION=$(nargo --version | awk -F' = ' '/nargo version/ {print $2}')
+          MIN_VERSION="1.0.0-beta.3"
+
+          version_gte() {
+            [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" = "$2" ]
+          }
+
+          if version_gte "$VERSION" "$MIN_VERSION"; then
+            noir-inspector --version
+          fi
+      - name: Check noir-profiler installation
+        run: |
+          # Fetch the version from `nargo` as to also check the `stable` and `nightly` toolchains
+          VERSION=$(nargo --version | awk -F' = ' '/nargo version/ {print $2}')
+          MIN_VERSION="1.0.0-beta.3"
+
+          version_gte() {
+            [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" = "$2" ]
+          }
+
+          if version_gte "$VERSION" "$MIN_VERSION"; then
+            noir-profiler --version
+          fi
 
   install-source:
     name: Noir ${{matrix.version}} (from source) on ${{matrix.os == 'ubuntu' && 'Linux' || matrix.os == 'macos' && 'macOS' || matrix.os == 'windows' && 'Windows' || '???'}}
@@ -116,6 +142,32 @@ jobs:
           toolchain: -b tags/${{matrix.version}}
       - name: Check nargo installation
         run: nargo --version
+      - name: Check noir-inspector installation
+        run: |
+          # Fetch the version from `nargo` as to also check the `stable` and `nightly` toolchains
+          VERSION=$(nargo --version | awk -F' = ' '/nargo version/ {print $2}')
+          MIN_VERSION="1.0.0-beta.3"
+
+          version_gte() {
+            [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" = "$2" ]
+          }
+
+          if version_gte "$VERSION" "$MIN_VERSION"; then
+            noir-inspector --version
+          fi
+      - name: Check noir-profiler installation
+        run: |
+          # Minimum version which began releasing binaries for the `noir-profiler`
+          # Account for the extra `v` that prefixes "${{matrix.version}}"
+          MIN_VERSION="v1.0.0-beta.3"
+
+          version_gte() {
+            [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" = "$2" ]
+          }
+
+          if version_gte ${{matrix.version}} "$MIN_VERSION"; then
+            noir-profiler --version
+          fi
 
   install-action:
     name: Noir ${{matrix.toolchain}} (GH action) on ${{matrix.os == 'ubuntu' && 'Linux' || matrix.os == 'macos' && 'macOS' || matrix.os == 'windows' && 'Windows' || '???'}}
@@ -151,3 +203,30 @@ jobs:
         working-directory: ./project
       - run: nargo test
         working-directory: ./project
+      - name: Check noir-inspector installation
+        run: |
+          # Fetch the version from `nargo` as to also check the `stable` and `nightly` toolchains
+          VERSION=$(nargo --version | awk -F' = ' '/nargo version/ {print $2}')
+          MIN_VERSION="1.0.0-beta.3"
+
+          version_gte() {
+            [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" = "$2" ]
+          }
+
+          if version_gte "$VERSION" "$MIN_VERSION"; then
+            noir-inspector --version
+          fi
+      - name: Check noir-profiler installation
+        working-directory: ./project
+        run: |
+          VERSION=$(nargo --version | awk -F' = ' '/nargo version/ {print $2}')
+          MIN_VERSION="1.0.0-beta.3"
+
+          version_gte() {
+            [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" = "$2" ]
+          }
+
+          if version_gte "$VERSION" "$MIN_VERSION"; then
+            noir-profiler --version
+            noir-profiler opcodes -a ./target/project.json -o ./target
+          fi
