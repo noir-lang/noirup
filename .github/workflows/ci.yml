@@ -82,7 +82,6 @@ jobs:
       - name: Check noir-profiler installation
         run: |
           VERSION=$(nargo --version | awk -F' = ' '/nargo version/ {print $2}')
-          # Minimum version which began releasing binaries for the `noir-profiler`
           MIN_VERSION="1.0.0-beta.3"
 
           version_gte() {
@@ -179,7 +178,6 @@ jobs:
         working-directory: ./project
         run: |
           VERSION=$(nargo --version | awk -F' = ' '/nargo version/ {print $2}')
-          # Minimum version which began releasing binaries for the `noir-profiler`.
           MIN_VERSION="1.0.0-beta.3"
 
           version_gte() {
