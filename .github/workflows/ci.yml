@@ -81,8 +81,9 @@ jobs:
         run: nargo --version
       - name: Check noir-profiler installation
         run: |
+          # Fetch the version from `nargo` as to also check the `stable` and `nightly` toolchains
           VERSION=$(nargo --version | awk -F' = ' '/nargo version/ {print $2}')
-          # Minimum version which began releasing binaries for the `noir-profiler`.
+          # Minimum version which began releasing binaries for the `noir-profiler`
           MIN_VERSION="1.0.0-beta.3"
 
           version_gte() {
@@ -131,13 +132,14 @@ jobs:
         run: nargo --version
       - name: Check noir-profiler installation
         run: |
-          # Minimum version which began releasing binaries for the `noir-profiler`.
-          MIN_VERSION="1.0.0-beta.3"
+          # Minimum version which began releasing binaries for the `noir-profiler`
+          # Account for the extra `v` that prefixes "${{matrix.version}}"
+          MIN_VERSION="v1.0.0-beta.3"
 
           version_gte() {
             [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" = "$2" ]
           }
-          echo ${{matrix.version}}
+
           if version_gte ${{matrix.version}} "$MIN_VERSION"; then
             noir-profiler --version
           fi
