@@ -137,8 +137,8 @@ jobs:
           version_gte() {
             [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" = "$2" ]
           }
-
-          if version_gte "${{matrix.version}}" "$MIN_VERSION"; then
+          echo ${{matrix.version}}
+          if version_gte ${{matrix.version}} "$MIN_VERSION"; then
             noir-profiler --version
           fi
 
