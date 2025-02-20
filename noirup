@@ -4,7 +4,7 @@ set -e
 NARGO_HOME=${NARGO_HOME-"$HOME/.nargo"}
 NARGO_BIN_DIR="$NARGO_HOME/bin"
 
-BINARIES=("nargo" "noir-profiler")
+BINARIES=("nargo" "noir-profiler", "noir-inspector")
 
 main() {
   need_cmd git
