@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/noir-lang/noirup/compare/v0.1.3...v0.1.4) (2025-02-20)
+
+
+### Features
+
+* Install noir-profiler and noir-inspector ([#46](https://github.com/noir-lang/noirup/issues/46)) ([cf71599](https://github.com/noir-lang/noirup/commit/cf71599ddf5dc57486935d3bcba8f6ef07bb8850))
+
 ## [0.1.3](https://github.com/noir-lang/noirup/compare/v0.1.2...v0.1.3) (2023-09-05)
 
 
