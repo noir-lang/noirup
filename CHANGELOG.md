@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.5](https://github.com/noir-lang/noirup/compare/v0.1.4...v0.1.5) (2025-02-25)
+
+
+### Features
+
+* add option for listing noir versions ([#39](https://github.com/noir-lang/noirup/issues/39)) ([324a51f](https://github.com/noir-lang/noirup/commit/324a51fca2c410d2477400316efc5ce0d743a5b3))
+
 ## [0.1.4](https://github.com/noir-lang/noirup/compare/v0.1.3...v0.1.4) (2025-02-20)
 
 
