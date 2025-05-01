@@ -34,7 +34,7 @@ runs:
       shell: bash
 
     - name: Cache Barretenberg transcript
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/noir_cache/ignition/transcript00.dat
         key: noir_cache
