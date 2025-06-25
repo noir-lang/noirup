@@ -127,7 +127,7 @@ jobs:
           INSTALL_URL: https://raw.githubusercontent.com/${{ env.REPO }}/${{ env.REF }}/install
           NOIRUP_BIN_URL: https://raw.githubusercontent.com/${{ env.REPO }}/${{ env.REF }}/noirup
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/bin/
@@ -189,7 +189,7 @@ jobs:
             toolchain: stable
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ./
         name: Run noir-lang/noirup
         id: version
