@@ -179,7 +179,7 @@ main() {
     ensure git fetch origin ${NOIRUP_BRANCH}:remotes/origin/${NOIRUP_BRANCH}
     ensure git checkout origin/${NOIRUP_BRANCH}
     # If set, checkout specific commit from branch
-    if [ ! -z $NOIRUP_COMMIT ]; then
+    if [ ! -z "$NOIRUP_COMMIT" ]; then
       say "installing at commit ${NOIRUP_COMMIT}"
       ensure git checkout ${NOIRUP_COMMIT}
     fi
@@ -205,7 +205,7 @@ main() {
   fi
 
   if [[ $(which nargo) =~ "cargo" ]]; then
-    warn "it appears your system has already has nargo installed via cargo. you may need to run 'rm $(which nargo)' to allow noirup to take precedence!"
+    warn "it appears your system already has nargo installed via cargo. you may need to run 'rm $(which nargo)' to allow noirup to take precedence!"
   fi
 
   say "done"
