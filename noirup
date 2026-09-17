@@ -144,18 +144,27 @@ main() {
     # Current name for the binary tarball created by Noir.   
     BIN_TARBALL_URL="${RELEASE_URL}/noir-${ARCHITECTURE}-${PLATFORM}.tar.gz"
     
-    # Legacy naming uses the `nargo-` for when noir-lang/noir used to only release a single nargo binary 
-    # Use the legacy naming if `noir-` does not exist
-    # Force curl to follow redirects with `-L`
-    if ! curl -L --head --fail --silent "$BIN_TARBALL_URL" >/dev/null 2>&1; then
-        BIN_TARBALL_URL="${RELEASE_URL}/nargo-${ARCHITECTURE}-${PLATFORM}.tar.gz"
-    fi
-
     # Download the binaries tarball and unpack it into the .nargo bin directory.
     say "downloading latest Noir binaries to '$NARGO_BIN_DIR'"
     ensure mkdir -p "$NARGO_BIN_DIR"
-    if ! curl -# -L --fail "$BIN_TARBALL_URL" | tar -xzC "$NARGO_BIN_DIR"; then
-      err "failed to download and unpack $BIN_TARBALL_URL"
+    TARBALL="$(mktemp)"
+    trap 'rm -f "$TARBALL"' EXIT
+
+    # Force curl to follow redirects with `-L`
+    HTTP_STATUS=$(curl -# -L -o "$TARBALL" -w '%{http_code}' "$BIN_TARBALL_URL" || true)
+    if [ "$HTTP_STATUS" = "404" ]; then
+      # Legacy naming uses the `nargo-` for when noir-lang/noir used to only release a single nargo binary
+      # Use the legacy naming if `noir-` does not exist
+      BIN_TARBALL_URL="${RELEASE_URL}/nargo-${ARCHITECTURE}-${PLATFORM}.tar.gz"
+      HTTP_STATUS=$(curl -# -L -o "$TARBALL" -w '%{http_code}' "$BIN_TARBALL_URL" || true)
+      if [ "$HTTP_STATUS" = "404" ]; then
+        # Avoid complaining about the legacy tarball, which isn't expected to exist for new releases.
+        err "no binaries for $ARCHITECTURE-$PLATFORM found at $RELEASE_URL, run 'noirup --list' to see the available versions"
+      fi
+    fi
+
+    if [ "$HTTP_STATUS" != "200" ] || ! tar -xzf "$TARBALL" -C "$NARGO_BIN_DIR"; then
+      err "failed to download and unpack $BIN_TARBALL_URL (HTTP status: $HTTP_STATUS)"
     fi
 
     # Prior to v0.3.0, Nargo and the std lib were distributed separately.
