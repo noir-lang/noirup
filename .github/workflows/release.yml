@@ -15,14 +15,9 @@ jobs:
     steps:
       - name: Run release-please
         id: release
-        uses: google-github-actions/release-please-action@v3
+        uses: googleapis/release-please-action@v5
         with:
           token: ${{ secrets.NOIR_RELEASES_TOKEN }}
-          release-type: simple
-          package-name: noirup
-          bump-minor-pre-major: true
-          bump-patch-for-minor-pre-major: true
-          pull-request-title-pattern: "chore(noirup): Release ${version}"
 
   upload-files:
     name: Upload files to release
@@ -31,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout project
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
         with:
           ref: ${{ needs.release-please.outputs.tag-name }}
 
