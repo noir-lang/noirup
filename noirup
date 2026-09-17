@@ -31,7 +31,7 @@ main() {
         exit 0
         ;;
       *)
-        err "internal error: unknown option "$1"\n";;
+        err "internal error: unknown option '$1'";;
     esac; shift
   done
 
@@ -118,7 +118,7 @@ main() {
 
     # Reject unsupported architectures.
     if [ "${ARCHITECTURE}" != "x86_64" ] && [ "${ARCHITECTURE}" != "aarch64" ]; then
-      err "unsupported architecure: $ARCHITECTURE-$PLATFORM"
+      err "unsupported architecture: $ARCHITECTURE-$PLATFORM"
     fi
 
     # Compute the URL of the release tarball in the Noir repository.
@@ -155,7 +155,7 @@ main() {
     say "downloading latest Noir binaries to '$NARGO_BIN_DIR'"
     ensure curl -# -L $BIN_TARBALL_URL | tar -xzC $NARGO_BIN_DIR
 
-    # Prior to v0.3.0, Nargo and the std lib were distributed separated.
+    # Prior to v0.3.0, Nargo and the std lib were distributed separately.
     ensure rm -rf "$CONFIG_DIR/noir-lang/std"
     if [ -d "$NARGO_BIN_DIR/noir-lang" ]; then
       # Release tarball contains std lib so we're installing a version prior to v0.3.0.
@@ -207,7 +207,7 @@ main() {
   fi
 
   if [[ $(which nargo) =~ "cargo" ]]; then
-    warn "it appears your system has already has nargo installed via cargo. you may need to run 'rm $(which nargo)' to allow noirup to take precedence!"
+    warn "it appears your system already has nargo installed via cargo. you may need to run 'rm $(which nargo)' to allow noirup to take precedence!"
   fi
 
   say "done"
