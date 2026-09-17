@@ -32,9 +32,7 @@ jobs:
         id: get_versions
         run: |
           # gh returns the Noir releases in reverse chronological order so we keep the most recent ones.
-          # Pre-releases are included so that release candidates are tested. Filtering on the `v` prefix
-          # drops the nightly releases, which make up most of the list so we need to fetch a lot of releases.
-          RECENT=$(gh release list -R noir-lang/noir --limit 1000 --json tagName,isDraft | jq -c --argjson window "$NOIR_VERSION_WINDOW" 'map(select(.isDraft | not) | .tagName | select(startswith("v"))) | .[0:$window]')
+          RECENT=$(gh release list -R noir-lang/noir --exclude-pre-releases --limit 100 --json tagName | jq -c --argjson window "$NOIR_VERSION_WINDOW" 'map(.tagName | select(startswith("v"))) | .[0:$window]')
 
           # Fail loudly rather than silently testing fewer versions than expected.
           if [ "$(jq length <<<"$RECENT")" -ne "$NOIR_VERSION_WINDOW" ]; then
