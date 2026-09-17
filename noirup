@@ -146,8 +146,10 @@ main() {
     
     # Legacy naming uses the `nargo-` for when noir-lang/noir used to only release a single nargo binary 
     # Use the legacy naming if `noir-` does not exist
+    # Probe with a one-byte ranged GET rather than a HEAD: release assets redirect to a presigned URL,
+    # and presigned URLs are only guaranteed to be valid for the method which will be used to download them.
     # Force curl to follow redirects with `-L`
-    if ! curl -L --head --fail --silent "$BIN_TARBALL_URL" >/dev/null 2>&1; then
+    if ! curl -L --fail --silent --range 0-0 "$BIN_TARBALL_URL" -o /dev/null; then
         BIN_TARBALL_URL="${RELEASE_URL}/nargo-${ARCHITECTURE}-${PLATFORM}.tar.gz"
     fi
 
