@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -eo pipefail
 
 NARGO_HOME=${NARGO_HOME-"$HOME/.nargo"}
 NARGO_BIN_DIR="$NARGO_HOME/bin"
@@ -153,7 +153,10 @@ main() {
 
     # Download the binaries tarball and unpack it into the .nargo bin directory.
     say "downloading latest Noir binaries to '$NARGO_BIN_DIR'"
-    ensure curl -# -L $BIN_TARBALL_URL | tar -xzC $NARGO_BIN_DIR
+    ensure mkdir -p "$NARGO_BIN_DIR"
+    if ! curl -# -L --fail "$BIN_TARBALL_URL" | tar -xzC "$NARGO_BIN_DIR"; then
+      err "failed to download and unpack $BIN_TARBALL_URL"
+    fi
 
     # Prior to v0.3.0, Nargo and the std lib were distributed separately.
     ensure rm -rf "$CONFIG_DIR/noir-lang/std"
