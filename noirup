@@ -157,6 +157,10 @@ main() {
       # Use the legacy naming if `noir-` does not exist
       BIN_TARBALL_URL="${RELEASE_URL}/nargo-${ARCHITECTURE}-${PLATFORM}.tar.gz"
       HTTP_STATUS=$(curl -# -L -o "$TARBALL" -w '%{http_code}' "$BIN_TARBALL_URL" || true)
+      if [ "$HTTP_STATUS" = "404" ]; then
+        # Avoid complaining about the legacy tarball, which isn't expected to exist for new releases.
+        err "no binaries for $ARCHITECTURE-$PLATFORM found at $RELEASE_URL, run 'noirup --list' to see the available versions"
+      fi
     fi
 
     if [ "$HTTP_STATUS" != "200" ] || ! tar -xzf "$TARBALL" -C "$NARGO_BIN_DIR"; then
