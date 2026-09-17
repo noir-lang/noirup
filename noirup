@@ -144,21 +144,37 @@ main() {
     # Current name for the binary tarball created by Noir.   
     BIN_TARBALL_URL="${RELEASE_URL}/noir-${ARCHITECTURE}-${PLATFORM}.tar.gz"
     
-    # Legacy naming uses the `nargo-` for when noir-lang/noir used to only release a single nargo binary 
-    # Use the legacy naming if `noir-` does not exist
-    # Probe with a one-byte ranged GET rather than a HEAD: release assets redirect to a presigned URL,
-    # and presigned URLs are only guaranteed to be valid for the method which will be used to download them.
-    # Force curl to follow redirects with `-L`
-    if ! curl -L --fail --silent --range 0-0 "$BIN_TARBALL_URL" -o /dev/null; then
-        BIN_TARBALL_URL="${RELEASE_URL}/nargo-${ARCHITECTURE}-${PLATFORM}.tar.gz"
-    fi
+    # Legacy naming uses the `nargo-` for when noir-lang/noir used to only release a single nargo binary
+    LEGACY_BIN_TARBALL_URL="${RELEASE_URL}/nargo-${ARCHITECTURE}-${PLATFORM}.tar.gz"
 
     # Download the binaries tarball and unpack it into the .nargo bin directory.
     say "downloading latest Noir binaries to '$NARGO_BIN_DIR'"
     ensure mkdir -p "$NARGO_BIN_DIR"
-    if ! curl -# -L --fail "$BIN_TARBALL_URL" | tar -xzC "$NARGO_BIN_DIR"; then
-      err "failed to download and unpack $BIN_TARBALL_URL"
+    TARBALL="$(mktemp)"
+
+    # Use the legacy naming only if we're told that `noir-` does not exist.
+    # We attempt the download rather than probing for the tarball first, as a probe (e.g. a HEAD request)
+    # isn't guaranteed to be treated in the same way as the download. Any other failure is reported
+    # as is, rather than being masked by a fallback to a tarball which may not exist either.
+    HTTP_STATUS=$(download "$BIN_TARBALL_URL" "$TARBALL")
+    if [ "$HTTP_STATUS" = "404" ]; then
+      BIN_TARBALL_URL="$LEGACY_BIN_TARBALL_URL"
+      HTTP_STATUS=$(download "$BIN_TARBALL_URL" "$TARBALL")
+      if [ "$HTTP_STATUS" = "404" ]; then
+        rm -f "$TARBALL"
+        err "no prebuilt binaries for $ARCHITECTURE-$PLATFORM were found at $RELEASE_URL"
+      fi
     fi
+    if [ "$HTTP_STATUS" != "200" ]; then
+      rm -f "$TARBALL"
+      err "failed to download $BIN_TARBALL_URL (HTTP status: $HTTP_STATUS)"
+    fi
+
+    if ! tar -xzf "$TARBALL" -C "$NARGO_BIN_DIR"; then
+      rm -f "$TARBALL"
+      err "failed to unpack binaries into '$NARGO_BIN_DIR'"
+    fi
+    rm -f "$TARBALL"
 
     # Prior to v0.3.0, Nargo and the std lib were distributed separately.
     ensure rm -rf "$CONFIG_DIR/noir-lang/std"
@@ -264,6 +280,13 @@ need_cmd() {
 
 check_cmd() {
   command -v "$1" >/dev/null 2>&1
+}
+
+# Downloads the URL $1 to the file $2, following redirects.
+# Prints the HTTP status of the final response, or "000" if there was none (e.g. due to a network error).
+# This never fails, the caller is expected to check the status.
+download() {
+  curl -# -L -o "$2" -w '%{http_code}' "$1" || true
 }
 
 # Run a command that should never fail. If the command fails execution
