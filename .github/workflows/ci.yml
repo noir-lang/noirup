@@ -54,6 +54,9 @@ jobs:
             toolchain: stable
     timeout-minutes: 45
     steps:
+      # Only needed for the scripts in `.github/scripts`, noirup itself is installed through the install script.
+      - uses: actions/checkout@v3
+
       - name: Parse toolchain
         id: parse
         run: |
@@ -85,11 +88,7 @@ jobs:
           VERSION=$(nargo --version | awk -F' = ' '/nargo version/ {print $2}')
           MIN_VERSION="1.0.0-beta.3"
 
-          version_gte() {
-            [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" = "$2" ]
-          }
-
-          if version_gte "$VERSION" "$MIN_VERSION"; then
+          if "$GITHUB_WORKSPACE/.github/scripts/version-gte.sh" "$VERSION" "$MIN_VERSION"; then
             noir-inspector --version
           fi
       - name: Check noir-profiler installation
@@ -98,11 +97,7 @@ jobs:
           VERSION=$(nargo --version | awk -F' = ' '/nargo version/ {print $2}')
           MIN_VERSION="1.0.0-beta.3"
 
-          version_gte() {
-            [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" = "$2" ]
-          }
-
-          if version_gte "$VERSION" "$MIN_VERSION"; then
+          if "$GITHUB_WORKSPACE/.github/scripts/version-gte.sh" "$VERSION" "$MIN_VERSION"; then
             noir-profiler --version
           fi
 
@@ -119,6 +114,9 @@ jobs:
         version: ${{ fromJson( needs.noir-version-list.outputs.noir_versions )}}
     timeout-minutes: 45
     steps:
+      # Only needed for the scripts in `.github/scripts`, noirup itself is installed through the install script.
+      - uses: actions/checkout@v3
+
       - name: Install noirup
         run: |
           curl -L $INSTALL_URL | bash
@@ -148,24 +146,15 @@ jobs:
           VERSION=$(nargo --version | awk -F' = ' '/nargo version/ {print $2}')
           MIN_VERSION="1.0.0-beta.3"
 
-          version_gte() {
-            [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" = "$2" ]
-          }
-
-          if version_gte "$VERSION" "$MIN_VERSION"; then
+          if "$GITHUB_WORKSPACE/.github/scripts/version-gte.sh" "$VERSION" "$MIN_VERSION"; then
             noir-inspector --version
           fi
       - name: Check noir-profiler installation
         run: |
           # Minimum version which began releasing binaries for the `noir-profiler`
-          # Account for the extra `v` that prefixes "${{matrix.version}}"
-          MIN_VERSION="v1.0.0-beta.3"
+          MIN_VERSION="1.0.0-beta.3"
 
-          version_gte() {
-            [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" = "$2" ]
-          }
-
-          if version_gte ${{matrix.version}} "$MIN_VERSION"; then
+          if "$GITHUB_WORKSPACE/.github/scripts/version-gte.sh" "${{matrix.version}}" "$MIN_VERSION"; then
             noir-profiler --version
           fi
 
@@ -209,11 +198,7 @@ jobs:
           VERSION=$(nargo --version | awk -F' = ' '/nargo version/ {print $2}')
           MIN_VERSION="1.0.0-beta.3"
 
-          version_gte() {
-            [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" = "$2" ]
-          }
-
-          if version_gte "$VERSION" "$MIN_VERSION"; then
+          if "$GITHUB_WORKSPACE/.github/scripts/version-gte.sh" "$VERSION" "$MIN_VERSION"; then
             noir-inspector --version
           fi
       - name: Check noir-profiler installation
@@ -222,11 +207,7 @@ jobs:
           VERSION=$(nargo --version | awk -F' = ' '/nargo version/ {print $2}')
           MIN_VERSION="1.0.0-beta.3"
 
-          version_gte() {
-            [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" = "$2" ]
-          }
-
-          if version_gte "$VERSION" "$MIN_VERSION"; then
+          if "$GITHUB_WORKSPACE/.github/scripts/version-gte.sh" "$VERSION" "$MIN_VERSION"; then
             noir-profiler --version
             noir-profiler opcodes -a ./target/project.json -o ./target
           fi
