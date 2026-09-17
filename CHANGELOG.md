@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.1.5](https://github.com/noir-lang/noirup/compare/v0.1.4...v0.1.5) (2026-09-17)
+
+
+### Features
+
+* add option for listing noir versions ([#39](https://github.com/noir-lang/noirup/issues/39)) ([324a51f](https://github.com/noir-lang/noirup/commit/324a51fca2c410d2477400316efc5ce0d743a5b3))
+* install noir-execute ([#65](https://github.com/noir-lang/noirup/issues/65)) ([1b4e93a](https://github.com/noir-lang/noirup/commit/1b4e93a297641311b5f4bd9e8f24df30f6751d84))
+
+
+### Bug Fixes
+
+* attempt the bundle download rather than probing for it ([#69](https://github.com/noir-lang/noirup/issues/69)) ([00aa0ec](https://github.com/noir-lang/noirup/commit/00aa0ec2de7c4022981188f411966f7461d218d4))
+* **ci:** rank releases above their pre-releases when comparing versions ([#66](https://github.com/noir-lang/noirup/issues/66)) ([c090b42](https://github.com/noir-lang/noirup/commit/c090b4279e8e2c64004187ca47a53af7b5e84ee0))
+* **ci:** test a rolling window of recent Noir releases ([#68](https://github.com/noir-lang/noirup/issues/68)) ([079cc02](https://github.com/noir-lang/noirup/commit/079cc0290f18bbb78e0b4e1d27e7b79012bebaa0))
+* **ci:** update workflow action dependencies ([#71](https://github.com/noir-lang/noirup/issues/71)) ([b31be1b](https://github.com/noir-lang/noirup/commit/b31be1be339c7ad408ccba5a7a88bdcffa683e5a))
+* create bin directory before unpacking prebuilt binaries ([#63](https://github.com/noir-lang/noirup/issues/63)) ([718dacd](https://github.com/noir-lang/noirup/commit/718dacdb8d7607659a2f43892a98ab988249418f))
+* ensure that output directory exists before moving binaries ([#55](https://github.com/noir-lang/noirup/issues/55)) ([f7b3089](https://github.com/noir-lang/noirup/commit/f7b3089f5839e1d10128fca6df0208a5a9f9f152))
+
 ## [0.1.4](https://github.com/noir-lang/noirup/compare/v0.1.3...v0.1.4) (2025-02-20)
 
 
