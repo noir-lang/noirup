@@ -153,7 +153,18 @@ main() {
 
     # Download the binaries tarball and unpack it into the .nargo bin directory.
     say "downloading latest Noir binaries to '$NARGO_BIN_DIR'"
-    ensure curl -# -L $BIN_TARBALL_URL | tar -xzC $NARGO_BIN_DIR
+    # Download and unpack as separate steps so that a failure in either is detected.
+    ensure mkdir -p "$NARGO_BIN_DIR"
+    TARBALL="$(mktemp)"
+    if ! curl -# -L --fail -o "$TARBALL" "$BIN_TARBALL_URL"; then
+      rm -f "$TARBALL"
+      err "failed to download $BIN_TARBALL_URL"
+    fi
+    if ! tar -xzf "$TARBALL" -C "$NARGO_BIN_DIR"; then
+      rm -f "$TARBALL"
+      err "failed to unpack binaries into '$NARGO_BIN_DIR'"
+    fi
+    rm -f "$TARBALL"
 
     # Prior to v0.3.0, Nargo and the std lib were distributed separately.
     ensure rm -rf "$CONFIG_DIR/noir-lang/std"
