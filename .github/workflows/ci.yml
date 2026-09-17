@@ -13,7 +13,11 @@ permissions:
 env:
   REPO: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
   REF: ${{ github.head_ref || github.ref_name }}
-  MINIMUM_NOIR_VERSION: v0.16.0
+  # The number of most recent Noir releases to test against.
+  NOIR_VERSION_WINDOW: 5
+  # An old release which is always tested to cover the legacy `nargo-` tarball naming.
+  # This is only installed from prebuilt binaries as it can no longer be built from source.
+  LEGACY_NOIR_VERSION: v0.16.0
 
 jobs:
   noir-version-list:
@@ -21,15 +25,27 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       noir_versions: ${{ steps.get_versions.outputs.versions }}
+      noir_source_versions: ${{ steps.get_versions.outputs.source_versions }}
 
     steps:
-      - name: Checkout sources
+      - name: Query Noir releases
         id: get_versions
-        run: |         
-          # gh returns the Noir releases in reverse chronological order so we keep all releases published after the minimum supported version.
-          VERSIONS=$(gh release list -R noir-lang/noir --exclude-pre-releases --json tagName -q 'map(.tagName) | index(env.MINIMUM_NOIR_VERSION) as $index | if $index then .[0:$index+1] else [env.MINIMUM_NOIR_VERSION] end')
+        run: |
+          # gh returns the Noir releases in reverse chronological order so we keep the most recent ones.
+          RECENT=$(gh release list -R noir-lang/noir --exclude-pre-releases --limit 100 --json tagName | jq -c --argjson window "$NOIR_VERSION_WINDOW" 'map(.tagName | select(startswith("v"))) | .[0:$window]')
+
+          # Fail loudly rather than silently testing fewer versions than expected.
+          if [ "$(jq length <<<"$RECENT")" -ne "$NOIR_VERSION_WINDOW" ]; then
+            echo "::error::expected $NOIR_VERSION_WINDOW Noir releases but found: $RECENT"
+            exit 1
+          fi
+
+          VERSIONS=$(jq -c --arg legacy "$LEGACY_NOIR_VERSION" '. + ([$legacy] - .)' <<<"$RECENT")
+
           echo "versions=$VERSIONS"
           echo "versions=$VERSIONS" >> $GITHUB_OUTPUT
+          echo "source_versions=$RECENT"
+          echo "source_versions=$RECENT" >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -129,7 +145,7 @@ jobs:
         # Installing from source can technically target any commit.
         # However, we only guarantee that noirup will build release commits.
         os: [ubuntu, macos]
-        version: ${{ fromJson( needs.noir-version-list.outputs.noir_versions )}}
+        version: ${{ fromJson( needs.noir-version-list.outputs.noir_source_versions )}}
     timeout-minutes: 45
     steps:
       - name: Install noirup
