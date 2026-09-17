@@ -73,6 +73,7 @@ main() {
     done
 
     # Move binaries into the `.nargo/bin` directory
+    ensure mkdir -p "$NARGO_BIN_DIR"
     for bin in "${BINARIES[@]}"; do
         # Move the binary only if it exists.
         # This ensures compatibility with older versions of Noir, 
@@ -193,6 +194,7 @@ main() {
     done
 
     # Move binaries into the `.nargo/bin` directory
+    ensure mkdir -p "$NARGO_BIN_DIR"
     for bin in "${BINARIES[@]}"; do
         # Move the binary only if it exists.
         # This ensures compatibility with older versions of Noir, 
