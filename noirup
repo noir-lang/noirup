@@ -4,7 +4,7 @@ set -eo pipefail
 NARGO_HOME=${NARGO_HOME-"$HOME/.nargo"}
 NARGO_BIN_DIR="$NARGO_HOME/bin"
 
-BINARIES=("nargo" "noir-profiler" "noir-inspector")
+BINARIES=("nargo" "noir-profiler" "noir-inspector" "noir-execute")
 
 main() {
   need_cmd git
