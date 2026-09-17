@@ -144,7 +144,10 @@ jobs:
       matrix:
         # Installing from source can technically target any commit.
         # However, we only guarantee that noirup will build release commits.
-        os: [ubuntu, macos]
+        #
+        # macOS is not tested as `ring` fails to compile on the virtualised Apple Silicon runners
+        # due to noirup building with `-C target-cpu=native`.
+        os: [ubuntu]
         version: ${{ fromJson( needs.noir-version-list.outputs.noir_source_versions )}}
     timeout-minutes: 45
     steps:
