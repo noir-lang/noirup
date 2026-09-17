@@ -56,6 +56,10 @@ jobs:
     steps:
       # Only needed for the scripts in `.github/scripts`, noirup itself is installed through the install script.
       - uses: actions/checkout@v3
+        with:
+          sparse-checkout: .github/scripts
+          # Cone mode would also check out every file in the repository root.
+          sparse-checkout-cone-mode: false
 
       - name: Parse toolchain
         id: parse
@@ -116,6 +120,10 @@ jobs:
     steps:
       # Only needed for the scripts in `.github/scripts`, noirup itself is installed through the install script.
       - uses: actions/checkout@v3
+        with:
+          sparse-checkout: .github/scripts
+          # Cone mode would also check out every file in the repository root.
+          sparse-checkout-cone-mode: false
 
       - name: Install noirup
         run: |
